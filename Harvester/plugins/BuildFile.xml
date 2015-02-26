@@ -1,0 +1,7 @@
+<library   file="*.cc" name="FastSimValidationHarvesterPlugins">
+  <flags   EDM_PLUGIN="1"/>
+  <use   name="FastSimValidation/Harvester"/>
+  <use   name="FWCore/MessageLogger"/>
+  <use   name="FWCore/Framework"/>
+  <use   name="DQMServices/Core"/>
+</library>
