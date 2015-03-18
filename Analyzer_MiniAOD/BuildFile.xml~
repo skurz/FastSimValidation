@@ -19,8 +19,10 @@
 <use   name="RecoJets/JetProducers"/>
 <use   name="RecoEgamma/EgammaTools"/>
 <use   name="DataFormats/Candidate"/>
+<use   name="DataFormats/Common"/>
 <use   name="DataFormats/RecoCandidate"/>
 <use   name="DataFormats/PatCandidates"/>
+<use   name="PhysicsTools/CandUtils"/>
 <export>
   <lib   name="1"/>
 </export>

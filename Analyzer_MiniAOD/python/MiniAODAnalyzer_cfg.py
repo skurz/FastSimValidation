@@ -53,10 +53,17 @@ def MiniAODAnalyzer(process,
     # Other statements
     from Configuration.AlCa.GlobalTag import GlobalTag
     process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '')  #for MC
+
+    # Create Subsets of Collections
+    process.load('FastSimValidation.Analyzer_MiniAOD.produceSubsets_cff')
+    process.SelectSubsets = cms.Sequence(
+        process.produceSubsets    
+        )
     
 
     # Path and EndPath definitions
-    process.dqmoffline_step = cms.Path(process.JetsAnalyzer_MiniAOD *
+    process.dqmoffline_step = cms.Path(process.SelectSubsets *
+                                        process.JetsAnalyzer_MiniAOD *
                                         process.METAnalyzer_MiniAOD *
                                         process.MuonAnalyzer_MiniAOD
         )

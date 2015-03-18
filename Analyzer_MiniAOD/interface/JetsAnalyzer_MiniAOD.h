@@ -43,6 +43,9 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
+// PtrVector
+#include "DataFormats/Common/interface/Ptr.h"
+#include "DataFormats/Common/interface/PtrVector.h"
  
 class JetsAnalyzer_MiniAOD: public DQMEDAnalyzer{
 
@@ -68,12 +71,8 @@ private:
 
 
   //variables from config file
-  edm::EDGetTokenT<pat::JetCollection> theRecoJetCollection_;
-  edm::EDGetTokenT<reco::GenJetCollection> theGenJetCollection_;
-
-  // cuts:
-  double ptThrJet_;
-  double etaThrJet_;
+  edm::EDGetTokenT<reco::CandidateCollection> theRecoJetCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theGenJetCollection_;
 
   // config
   bool fullSim_;

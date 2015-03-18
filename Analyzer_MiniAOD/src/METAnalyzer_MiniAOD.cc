@@ -131,12 +131,16 @@ void METAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& eS
   // --------------------------------------
   // HT
   Double_t HT = 0;
+  reco::MET::LorentzVector metP4(0,0,0,0);
 
   // For now: simple Calculation (only jets considered)
   for (pat::JetCollection::const_iterator i_recojet = RecoJetCollection->begin(); i_recojet != RecoJetCollection->end(); ++i_recojet)
   {
     HT += i_recojet->pt();
+    metP4 -= i_recojet->begin()->p4();
   }
+
+  double recoMET = metP4.pt();
 
   if(debug_) std::cout << HT << std::endl;
 
@@ -150,17 +154,16 @@ void METAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& eS
 
   // --------------------------------------
   // genMET
-  reco::MET::LorentzVector metP4(0,0,0,0);
+  reco::MET::LorentzVector genMetP4(0,0,0,0);
 
   // For now: simple Calculation (only jets considered)
   for (reco::GenJetCollection::const_iterator i_genjet = GenJetCollection->begin(); i_genjet != GenJetCollection->end(); ++i_genjet)
   {
-      metP4 -= i_genjet->begin()->p4();
+      genMetP4 -= i_genjet->begin()->p4();
   }
 
-  double genMET = metP4.pt();
+  double genMET = genMetP4.pt();
 
-  if(debug_) std::cout << genMET << std::endl;
 
   
   // --------------------------------------
@@ -201,6 +204,8 @@ void METAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& eS
   double metPt = METCollection->begin()->pt();
   double metPx = METCollection->begin()->px();
   double metPy = METCollection->begin()->py();
+
+  if(debug_) std::cout << genMET << "; " << metPt << "; " << recoMET << std::endl;
 
   // projection: thrust axis normalized to 1
   math::XYZVector metP3(metPx, metPy, 0.);
