@@ -207,23 +207,23 @@ void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   
   // TH2
 
-  h_PtvsjetRelPtDiff = ibooker_.book2D("PtvsjetRelPtDiff","(reco pt - true pt) / (true pt) vs true pt",50.,0.,500.,20.,-1.,1.);
-  h_EtavsjetRelPtDiff = ibooker_.book2D("EtavsjetRelPtDiff","(reco pt - true pt) / (true pt) vs true eta",50.,-5.,5.,20,-1.,1.);
+  h_PtvsjetRelPtDiff = ibooker_.book2D("PtvsjetRelPtDiff","(reco pt - true pt) / (true pt) vs true pt",50,0.,500.,20,-1.,1.);
+  h_EtavsjetRelPtDiff = ibooker_.book2D("EtavsjetRelPtDiff","(reco pt - true pt) / (true pt) vs true eta",50,-5.,5.,20,-1.,1.);
 
-  h_PtvsjetEtaDiff = ibooker_.book2D("PtvsjetEtaDiff","(reco eta - true eta) vs true pt",50.,0.,500.,20.,-0.5,0.5);
-  h_EtavsjetEtaDiff = ibooker_.book2D("EtavsjetEtaDiff","(reco eta - true eta) vs true eta",50.,-5.,5.,20,-1.,1.);
+  h_PtvsjetEtaDiff = ibooker_.book2D("PtvsjetEtaDiff","(reco eta - true eta) vs true pt",50,0.,500.,20,-0.5,0.5);
+  h_EtavsjetEtaDiff = ibooker_.book2D("EtavsjetEtaDiff","(reco eta - true eta) vs true eta",50,-5.,5.,20,-1.,1.);
 
-  h_PtvsjetPhiDiff = ibooker_.book2D("PtvsjetPhiDiff","(reco phi - true phi) vs true pt",50.,0.,500.,20.,-0.5,0.5);
-  h_EtavsjetPhiDiff = ibooker_.book2D("EtavsjetPhiDiff","(reco phi - true phi) vs true eta",50.,-5.,5.,20,-1.,1.);
+  h_PtvsjetPhiDiff = ibooker_.book2D("PtvsjetPhiDiff","(reco phi - true phi) vs true pt",50,0.,500.,20,-0.5,0.5);
+  h_EtavsjetPhiDiff = ibooker_.book2D("EtavsjetPhiDiff","(reco phi - true phi) vs true eta",50,-5.,5.,20,-1.,1.);
 
 
   ibooker_.setCurrentFolder("Jets/Helpers");
 
-  h_PtvsgenJet = ibooker_.book1D("PtvsgenJet","# genJets vs pt",50.,0.,500.);
-  h_EtavsgenJet = ibooker_.book1D("EtavsgenJet","# genJets vs eta",50.,-5.,5.);
+  h_PtvsgenJet = ibooker_.book1D("PtvsgenJet","# genJets vs pt",50,0.,500.);
+  h_EtavsgenJet = ibooker_.book1D("EtavsgenJet","# genJets vs eta",50,-5.,5.);
 
-  h_PtvsrecoJet = ibooker_.book1D("PtvsrecoJet","# recoJets vs pt",50.,0.,500.);
-  h_EtavsrecoJet = ibooker_.book1D("EtavsrecoJet","# genJets vs eta",50.,-5.,5.);
+  h_PtvsrecoJet = ibooker_.book1D("PtvsrecoJet","# recoJets vs pt",50,0.,500.);
+  h_EtavsrecoJet = ibooker_.book1D("EtavsrecoJet","# genJets vs eta",50,-5.,5.);
 
   ibooker_.cd();  
 

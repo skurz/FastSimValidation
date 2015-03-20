@@ -17,7 +17,7 @@ process.load("DQMServices.Components.DQMEnvironment_cfi")
 
 # my client and my Tests
 process.load('FastSimValidation.Harvester.MiniAODHarvester_cfi')
-process.load('FastSimValidation.Harvester.MiniAOD_GenericClient_cfi')
+process.load('FastSimValidation.Harvester.produceEfficiencies_cfi')
 
 
 process.maxEvents = cms.untracked.PSet(
@@ -42,17 +42,19 @@ process.source = cms.Source("DQMRootSource",
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:mc', '')  #for MC
 
-
+process.calcEfficiencies = cms.Sequence(
+        process.produceEfficiencies    
+        )
 
 # Path and EndPath definitions
 #process.myHarvesting = cms.Path(process.MiniAODHarvester_cfi)
-process.jetIDeff = cms.Path(process.MiniAOD_GenericClient)
+process.MiniAOD_GenericClient = cms.Path(process.calcEfficiencies)
 process.dqmsave_step = cms.Path(process.DQMSaver)
 
 # Schedule definition
 process.schedule = cms.Schedule(
                                 #process.myHarvesting,
-                                process.jetIDeff,
+                                process.MiniAOD_GenericClient,
                                 process.dqmsave_step
     )
 

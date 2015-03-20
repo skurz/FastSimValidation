@@ -73,10 +73,9 @@ private:
   //private variables
 
   //variables from config file
-  edm::EDGetTokenT<pat::MuonCollection> theMuonCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theMuonCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theGenParticleCollection_;
   edm::EDGetTokenT<reco::VertexCollection> thePVCollection_;
-  edm::EDGetTokenT<pat::PackedGenParticleCollection> theGenParticleCollection_;
-
 
   // cuts:
 
@@ -88,13 +87,19 @@ private:
 
 
   // Histograms
-  MonitorElement* h_HTvsmetPt;
-  MonitorElement* h_NvertexvsmetPt;
-  MonitorElement* h_ThrustvsmetPt;
-  MonitorElement* h_SumETvsmetPt;
-  MonitorElement* h_NJetsvsmetPt;
-  MonitorElement* h_genMETvsmetPt;
+  MonitorElement* h_LooseIDIso_TruePtvsFracPtTruePt;
+  MonitorElement* h_LooseIDIso_EtavsFracPtTruePt;
 
+  MonitorElement* h_TightIDIso_TruePtvsFracPtTruePt;
+  MonitorElement* h_TightIDIso_EtavsFracPtTruePt;
+
+  MonitorElement* h_PtvsgenMuon;
+  MonitorElement* h_EtavsgenMuon;
+  MonitorElement* h_LooseIDIso_PtvsrecoMuon;
+  MonitorElement* h_LooseIDIso_EtavsrecoMuon;
+  MonitorElement* h_TightIDIso_PtvsrecoMuon;
+  MonitorElement* h_TightIDIso_EtavsrecoMuon;
+  
 };
 
 
