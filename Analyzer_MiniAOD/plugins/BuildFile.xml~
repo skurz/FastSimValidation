@@ -1,7 +1,0 @@
-<library   file="*.cc" name="FastSimValidationAnalyzerPlugins">
-  <flags   EDM_PLUGIN="1"/>
-  <use   name="FastSimValidation/Analyzer"/>
-  <use   name="FWCore/MessageLogger"/>
-  <use   name="FWCore/Framework"/>
-  <use   name="DQMServices/Core"/>
-</library>
