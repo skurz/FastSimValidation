@@ -22,6 +22,13 @@ selectedGenJets = cms.EDFilter("CandViewSelector",
     filter = cms.bool(False)
     )
 
+produceJets = cms.Sequence(
+    preSelectedRecoJets *
+    selectedRecoJets *
+    selectedGenJets
+    )
+
+
 # Create subset of Muons
 # TightID and Isolation Cuts are performed within the Analyzer
 selectedMuons = cms.EDFilter("CandViewSelector",
@@ -43,12 +50,44 @@ selectedGenMuons = cms.EDFilter("CandViewSelector",
     filter = cms.bool(False)
     )
 
-# Sequences to produce all subsets
-produceSubsets = cms.Sequence(
-    preSelectedRecoJets *
-    selectedRecoJets *
-    selectedGenJets *
+produceMuons = cms.Sequence(
     selectedMuons *
     genMuons *
     selectedGenMuons
+    )
+
+
+# Create subset of Electrons
+# veto/loose/medium/tight working points are selected within the analyzer
+selectedElectrons = cms.EDFilter("CandViewSelector",
+    src = cms.InputTag("slimmedElectrons"),
+    cut = cms.string("abs(eta)<2.5 && pt>10."), 
+    filter = cms.bool(False)
+    )
+
+genElectrons = cms.EDFilter("PdgIdAndStatusCandViewSelector",
+    src = cms.InputTag("packedGenParticles"), 
+    pdgId = cms.vint32(-11, +11),
+    status = cms.vint32(1),
+    filter = cms.bool(False)
+    )
+
+selectedGenElectrons = cms.EDFilter("CandViewSelector",
+    src = cms.InputTag("genElectrons"),
+    cut = cms.string("abs(eta)<2.5 && pt>10."), 
+    filter = cms.bool(False)
+    )
+
+produceElectrons = cms.Sequence(
+    selectedElectrons *
+    genElectrons *
+    selectedGenElectrons
+    )
+
+
+# Sequences to produce all subsets
+produceSubsets = cms.Sequence(
+    produceJets *
+    produceMuons *
+    produceElectrons
     )

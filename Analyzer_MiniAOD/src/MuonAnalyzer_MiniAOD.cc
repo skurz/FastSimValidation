@@ -154,8 +154,11 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     if(i_patMuonPtr->isLooseMuon() && muonIso < 0.20) looseMuons.push_back(i_patMuonPtr);
     if(i_patMuonPtr->isTightMuon(*pVertex) && muonIso < 0.12) tightMuons.push_back(i_patMuonPtr);
   }
+  
 
+  //-------------------------------
   // Fill Histrograms
+  //-------------------------------
 
   // Loose
   for (std::vector<const pat::Muon *>::const_iterator i_looseMuon = looseMuons.begin(); i_looseMuon != looseMuons.end(); ++i_looseMuon)
@@ -169,8 +172,8 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     }
     if(!matchedGenMuon) continue;
 	
-	h_LooseIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
-	h_LooseIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
+  	h_LooseIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
+  	h_LooseIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
 
     h_LooseIDIso_TruePtvsFracPtTruePt->Fill(matchedGenMuon->pt(), i_looseMuonPtr->pt() / matchedGenMuon->pt());
     h_LooseIDIso_EtavsFracPtTruePt->Fill(matchedGenMuon->eta(), i_looseMuonPtr->pt() / matchedGenMuon->pt());
@@ -188,8 +191,8 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     }
     if(!matchedGenMuon) continue;
 	
-	h_TightIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
-	h_TightIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
+  	h_TightIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
+  	h_TightIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
 
     h_TightIDIso_TruePtvsFracPtTruePt->Fill(matchedGenMuon->pt(), i_tightMuonPtr->pt() / matchedGenMuon->pt());
     h_TightIDIso_EtavsFracPtTruePt->Fill(matchedGenMuon->eta(), i_tightMuonPtr->pt() / matchedGenMuon->pt());
@@ -203,11 +206,6 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
 
 
   if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
-
-  //-------------------------------
-  //--- Fill Histograms
-  //-------------------------------
-
 
 }
 //
@@ -247,6 +245,7 @@ void MuonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   
   h_PtvsgenMuon = ibooker_.book1D("PtvsgenMuon","# genMuons vs pt",50,0.,500.);
   h_EtavsgenMuon = ibooker_.book1D("EtavsgenMuon","# genMuons vs eta",50,-5.,5.);
+
   h_LooseIDIso_PtvsrecoMuon = ibooker_.book1D("LooseIDIso_PtvsrecoMuon","# recoMuons vs pt for Loose ID/Iso",50,0.,500.);
   h_LooseIDIso_EtavsrecoMuon = ibooker_.book1D("LooseIDIso_EtavsrecoMuon","# recoMuons vs eta for Loose ID/Iso",50,-5.,5.);
   h_TightIDIso_PtvsrecoMuon = ibooker_.book1D("TightIDIso_PtvsrecoMuon","# recoMuons vs pt for Tight ID/Iso",50,0.,500.);
