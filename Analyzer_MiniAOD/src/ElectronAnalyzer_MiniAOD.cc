@@ -135,7 +135,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
 
     if(debug_)
     for(std::vector<std::pair<std::string,float>>::const_iterator i_elIDs = i_patElectronPtr->electronIDs().begin(); i_elIDs != i_patElectronPtr->electronIDs().end(); ++i_elIDs){
-      if(debug_) std::cout << i_elIDs->first << std::endl;
+      std::cout << i_elIDs->first << std::endl;
     }
 
       /* Content of electronIDs()
@@ -175,7 +175,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenElectron = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_vetoElectronPtr, **i_genElectron) < 0.1) matchedGenElectron = (*i_genElectron);
+        if(deltaR(*i_vetoElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
     }
     if(!matchedGenElectron) continue;
 	
@@ -194,7 +194,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenElectron = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_looseElectronPtr, **i_genElectron) < 0.1) matchedGenElectron = (*i_genElectron);
+        if(deltaR(*i_looseElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
     }
     if(!matchedGenElectron) continue;
   
@@ -213,7 +213,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenElectron = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_mediumElectronPtr, **i_genElectron) < 0.1) matchedGenElectron = (*i_genElectron);
+        if(deltaR(*i_mediumElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
     }
     if(!matchedGenElectron) continue;
   
@@ -232,7 +232,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenElectron = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_tightElectronPtr, **i_genElectron) < 0.1) matchedGenElectron = (*i_genElectron);
+        if(deltaR(*i_tightElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
     }
     if(!matchedGenElectron) continue;
 	

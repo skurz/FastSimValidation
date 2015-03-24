@@ -168,7 +168,7 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenMuon = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) {
-        if(deltaR(*i_looseMuonPtr, **i_genMuon) < 0.1) matchedGenMuon = (*i_genMuon);
+        if(deltaR(*i_looseMuonPtr, **i_genMuon) < 0.3) matchedGenMuon = (*i_genMuon);
     }
     if(!matchedGenMuon) continue;
 	
@@ -180,14 +180,14 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
   }
 
   // Tight
-  for (std::vector<const pat::Muon *>::const_iterator i_tightMuon = looseMuons.begin(); i_tightMuon != looseMuons.end(); ++i_tightMuon)
+  for (std::vector<const pat::Muon *>::const_iterator i_tightMuon = tightMuons.begin(); i_tightMuon != tightMuons.end(); ++i_tightMuon)
   {
     const pat::Muon* i_tightMuonPtr = *i_tightMuon;
     
     // Match Gen <-> Reco
     const pat::PackedGenParticle* matchedGenMuon = NULL;
     for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) {
-        if(deltaR(*i_tightMuonPtr, **i_genMuon) < 0.1) matchedGenMuon = (*i_genMuon);
+        if(deltaR(*i_tightMuonPtr, **i_genMuon) < 0.3) matchedGenMuon = (*i_genMuon);
     }
     if(!matchedGenMuon) continue;
 	
@@ -198,6 +198,7 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     h_TightIDIso_EtavsFracPtTruePt->Fill(matchedGenMuon->eta(), i_tightMuonPtr->pt() / matchedGenMuon->pt());
   }
   
+  // Gen
   for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
   {
     h_PtvsgenMuon->Fill((*i_genMuon)->pt());
@@ -205,7 +206,20 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
   }
 
 
-  if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
+  //if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
+  if(debug_ && genMuons.size() != looseMuons.size()){
+    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
+    {
+      std::cout << (*i_genMuon)->pt() << "; ";
+    }
+    std::cout << std::endl;
+
+    for (std::vector<const pat::Muon *>::const_iterator i_looseMuon = looseMuons.begin(); i_looseMuon != looseMuons.end(); ++i_looseMuon)
+    {
+      std::cout << (*i_looseMuon)->pt() << "; ";
+    }
+    std::cout << std::endl;
+  }
 
 }
 //

@@ -38,10 +38,23 @@ produceElectronEff = cms.EDAnalyzer("DQMGenericClient",
                                           verbose = cms.untracked.uint32(0),
     )
 
+producePhotonEff = cms.EDAnalyzer("DQMGenericClient",
+                                          subDirs = cms.untracked.vstring("Photon"),
+                                          efficiency = cms.vstring(
+                                              "loosePhotonIDIsoPtvsEff 'Photon IDIso Efficiency vs Pt for loose Photon ID/Iso' Helpers/LooseIDIso_PtvsrecoPhoton Helpers/PtvsgenPhoton",
+                                              "loosePhotonIDIsoEtavsEff 'Photon IDIso Efficiency vs Eta for loose Photon ID/Iso' Helpers/LooseIDIso_EtavsrecoPhoton Helpers/EtavsgenPhoton",
+                                              "tightPhotonIDIsoPtvsEff 'Photon IDIso Efficiency vs Pt for tight Photon ID/Iso' Helpers/TightIDIso_PtvsrecoPhoton Helpers/PtvsgenPhoton",
+                                              "tightPhotonIDIsoEtavsEff 'Photon IDIso Efficiency vs Eta for tight Photon ID/Iso' Helpers/TightIDIso_EtavsrecoPhoton Helpers/EtavsgenPhoton"
+                                              ),
+                                          resolution = cms.vstring(""),
+                                          verbose = cms.untracked.uint32(0),
+    )
+
 
 # Sequences to produce all efficiency plots
 produceEfficiencies = cms.Sequence(
     produceJetEff *
     produceMuonEff *
-    produceElectronEff
+    produceElectronEff *
+    producePhotonEff
     )

@@ -23,6 +23,7 @@ def MiniAODAnalyzer(process,
     process.load('FastSimValidation.Analyzer_MiniAOD.METAnalyzer_MiniAOD_cfi')
     process.load('FastSimValidation.Analyzer_MiniAOD.MuonAnalyzer_MiniAOD_cfi')
     process.load('FastSimValidation.Analyzer_MiniAOD.ElectronAnalyzer_MiniAOD_cfi')
+    process.load('FastSimValidation.Analyzer_MiniAOD.PhotonAnalyzer_MiniAOD_cfi')
 
 
     process.maxEvents = cms.untracked.PSet(
@@ -67,7 +68,8 @@ def MiniAODAnalyzer(process,
                                         process.JetsAnalyzer_MiniAOD *
                                         process.METAnalyzer_MiniAOD *
                                         process.MuonAnalyzer_MiniAOD *
-                                        process.ElectronAnalyzer_MiniAOD
+                                        process.ElectronAnalyzer_MiniAOD *
+                                        process.PhotonAnalyzer_MiniAOD
         )
     process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 
