@@ -27,7 +27,8 @@ ElectronAnalyzer_MiniAOD::ElectronAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   
   // Get parameters from configuration file
   theElectronCollection_         = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("ElectronCollection"));
-  theGenParticleCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenElectronCollection"));
+  theGenElectronCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenElectronCollection"));
+  theElectronIDs_ = ps.getParameter<std::vector<edm::ParameterSet>>("ElectronIDs");
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -101,16 +102,16 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
   }
 
   // GenElectrons
-  edm::Handle<reco::CandidateCollection> genParticleCollection;
-  e.getByToken(theGenParticleCollection_, genParticleCollection);
-  if ( !genParticleCollection.isValid() ) 
+  edm::Handle<reco::CandidateCollection> genElectronCollection;
+  e.getByToken(theGenElectronCollection_, genElectronCollection);
+  if ( !genElectronCollection.isValid() ) 
   {
-    edm::LogError ("ElectronAnalyzer_MiniAOD") << "invalid collection: genParticles" << "\n";
+    edm::LogError ("ElectronAnalyzer_MiniAOD") << "invalid collection: genElectrons" << "\n";
     return;
   }
 
   std::vector<const pat::PackedGenParticle*> genElectrons;
-  for (reco::CandidateCollection::const_iterator i_genElectron = genParticleCollection->begin(); i_genElectron != genParticleCollection->end(); ++i_genElectron)
+  for (reco::CandidateCollection::const_iterator i_genElectron = genElectronCollection->begin(); i_genElectron != genElectronCollection->end(); ++i_genElectron)
   {
     try{
       genElectrons.push_back(dynamic_cast<const pat::PackedGenParticle*>(&(*i_genElectron)));
@@ -119,139 +120,60 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     }
   }
 
+  // ElectronIDs
+  std::vector<std::pair<TString, double>> idPairs;
+  for (std::vector<edm::ParameterSet>::const_iterator it = theElectronIDs_.begin(); it != theElectronIDs_.end(); ++it) {
+    idPairs.push_back(std::make_pair(it->getParameter<std::string>("idString"), it->getParameter<double>("cutValue")));
+  }
+
 
   //-------------------------------
   //--- Create Subsets
   //-------------------------------
-  // veto/loose/medium/tight ID
-  std::vector<const pat::Electron*> vetoElectrons;
-  std::vector<const pat::Electron*> looseElectrons;
-  std::vector<const pat::Electron*> mediumElectrons;
-  std::vector<const pat::Electron*> tightElectrons;
+  // Create subset for every ID
+  std::vector<std::vector<const pat::Electron*>> idElectrons;
 
-  for (std::vector<const pat::Electron *>::const_iterator i_patElectron = patElectrons.begin(); i_patElectron != patElectrons.end(); ++i_patElectron)
-  {
-    const pat::Electron* i_patElectronPtr = *i_patElectron;
+  for(std::vector<std::pair<TString, double>>::const_iterator i_elID = idPairs.begin(); i_elID != idPairs.end(); ++i_elID){
 
-    if(debug_)
-    for(std::vector<std::pair<std::string,float>>::const_iterator i_elIDs = i_patElectronPtr->electronIDs().begin(); i_elIDs != i_patElectronPtr->electronIDs().end(); ++i_elIDs){
-      std::cout << i_elIDs->first << std::endl;
+    std::vector<const pat::Electron*> passedEls;
+    for (std::vector<const pat::Electron *>::const_iterator i_patElectron = patElectrons.begin(); i_patElectron != patElectrons.end(); ++i_patElectron){
+      if((*i_patElectron)->electronID(i_elID->first) > i_elID->second){
+        passedEls.push_back((*i_patElectron));
+      }
     }
 
-      /* Content of electronIDs()
-      cutBasedElectronID-CSA14-50ns-V1-standalone-loose
-      cutBasedElectronID-CSA14-50ns-V1-standalone-medium
-      cutBasedElectronID-CSA14-50ns-V1-standalone-tight
-      cutBasedElectronID-CSA14-50ns-V1-standalone-veto
-      cutBasedElectronID-CSA14-PU20bx25-V0-standalone-loose
-      cutBasedElectronID-CSA14-PU20bx25-V0-standalone-medium
-      cutBasedElectronID-CSA14-PU20bx25-V0-standalone-tight
-      cutBasedElectronID-CSA14-PU20bx25-V0-standalone-veto
-      eidLoose
-      eidRobustHighEnergy
-      eidRobustLoose
-      eidRobustTight
-      eidTight
-      heepElectronID-HEEPV50-CSA14-25ns
-      heepElectronID-HEEPV50-CSA14-startup
-      */
-
-      if(i_patElectronPtr->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-veto") > 0.5) vetoElectrons.push_back(i_patElectronPtr);
-      if(i_patElectronPtr->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-loose") > 0.5) looseElectrons.push_back(i_patElectronPtr);
-      if(i_patElectronPtr->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-medium") > 0.5) mediumElectrons.push_back(i_patElectronPtr);
-      if(i_patElectronPtr->electronID("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-tight") > 0.5) tightElectrons.push_back(i_patElectronPtr);
+    idElectrons.push_back(passedEls);
   }
 
+  if(debug_)
+  for (std::vector<const pat::Electron *>::const_iterator i_patElectron = patElectrons.begin(); i_patElectron != patElectrons.end(); ++i_patElectron)
+  {    
+    for(std::vector<std::pair<std::string,float>>::const_iterator i_elIDs = (*i_patElectron)->electronIDs().begin(); i_elIDs != (*i_patElectron)->electronIDs().end(); ++i_elIDs){
+      std::cout << i_elIDs->first << std::endl;
+    }
+  }   
+  
 
   //-------------------------------
   // Fill Histrograms
   //-------------------------------
 
-  // Veto
-  for (std::vector<const pat::Electron *>::const_iterator i_vetoElectron = vetoElectrons.begin(); i_vetoElectron != vetoElectrons.end(); ++i_vetoElectron)
-  {
-    const pat::Electron* i_vetoElectronPtr = *i_vetoElectron;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenElectron = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_vetoElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
-    }
-    if(!matchedGenElectron) continue;
-	
-  	h_VetoID_PtvsrecoElectron->Fill(matchedGenElectron->pt());
-  	h_VetoID_EtavsrecoElectron->Fill(matchedGenElectron->eta());
-
-    h_VetoID_TruePtvsFracPtTruePt->Fill(matchedGenElectron->pt(), i_vetoElectronPtr->pt() / matchedGenElectron->pt());
-    h_VetoID_EtavsFracPtTruePt->Fill(matchedGenElectron->eta(), i_vetoElectronPtr->pt() / matchedGenElectron->pt());
-  }
-
-  // Loose
-  for (std::vector<const pat::Electron *>::const_iterator i_looseElectron = looseElectrons.begin(); i_looseElectron != looseElectrons.end(); ++i_looseElectron)
-  {
-    const pat::Electron* i_looseElectronPtr = *i_looseElectron;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenElectron = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_looseElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
-    }
-    if(!matchedGenElectron) continue;
-  
-    h_LooseID_PtvsrecoElectron->Fill(matchedGenElectron->pt());
-    h_LooseID_EtavsrecoElectron->Fill(matchedGenElectron->eta());
-
-    h_LooseID_TruePtvsFracPtTruePt->Fill(matchedGenElectron->pt(), i_looseElectronPtr->pt() / matchedGenElectron->pt());
-    h_LooseID_EtavsFracPtTruePt->Fill(matchedGenElectron->eta(), i_looseElectronPtr->pt() / matchedGenElectron->pt());
-  }
-
-  // Medium
-  for (std::vector<const pat::Electron *>::const_iterator i_mediumElectron = mediumElectrons.begin(); i_mediumElectron != mediumElectrons.end(); ++i_mediumElectron)
-  {
-    const pat::Electron* i_mediumElectronPtr = *i_mediumElectron;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenElectron = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_mediumElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
-    }
-    if(!matchedGenElectron) continue;
-  
-    h_MediumID_PtvsrecoElectron->Fill(matchedGenElectron->pt());
-    h_MediumID_EtavsrecoElectron->Fill(matchedGenElectron->eta());
-
-    h_MediumID_TruePtvsFracPtTruePt->Fill(matchedGenElectron->pt(), i_mediumElectronPtr->pt() / matchedGenElectron->pt());
-    h_MediumID_EtavsFracPtTruePt->Fill(matchedGenElectron->eta(), i_mediumElectronPtr->pt() / matchedGenElectron->pt());
-  }
-
-  // Tight
-  for (std::vector<const pat::Electron *>::const_iterator i_tightElectron = tightElectrons.begin(); i_tightElectron != tightElectrons.end(); ++i_tightElectron)
-  {
-    const pat::Electron* i_tightElectronPtr = *i_tightElectron;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenElectron = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) {
-        if(deltaR(*i_tightElectronPtr, **i_genElectron) < 0.3) matchedGenElectron = (*i_genElectron);
-    }
-    if(!matchedGenElectron) continue;
-	
-  	h_TightID_PtvsrecoElectron->Fill(matchedGenElectron->pt());
-  	h_TightID_EtavsrecoElectron->Fill(matchedGenElectron->eta());
-
-    h_TightID_TruePtvsFracPtTruePt->Fill(matchedGenElectron->pt(), i_tightElectronPtr->pt() / matchedGenElectron->pt());
-    h_TightID_EtavsFracPtTruePt->Fill(matchedGenElectron->eta(), i_tightElectronPtr->pt() / matchedGenElectron->pt());
+  int histID = 0;
+  for(std::vector<std::vector<const pat::Electron*>>::iterator i_idElectrons = idElectrons.begin(); i_idElectrons != idElectrons.end(); ++i_idElectrons){
+    fillHisto(histID, &(*i_idElectrons), &genElectrons);
+    //std::cout << (&(*it))->size() << std::endl;
+    ++histID;
   }
 
   // Gen
   for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) 
   {
-    h_PtvsgenElectron->Fill((*i_genElectron)->pt());
-    h_EtavsgenElectron->Fill((*i_genElectron)->eta());
+    h_Pt_genParticle->Fill((*i_genElectron)->pt());
+    h_Eta_genParticle->Fill((*i_genElectron)->eta());
   }
 
 
-  if(debug_ && genElectrons.size() > 0) std::cout << genElectrons.size() << "; " << looseElectrons.size() << "; " << tightElectrons.size() << std::endl;
+  //if(debug_ && genElectrons.size() > 0) std::cout << genElectrons.size() << "; " << looseElectrons.size() << "; " << tightElectrons.size() << std::endl;
 
 
 }
@@ -278,37 +200,62 @@ void ElectronAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const
 //
 void ElectronAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
+  std::vector<TString> tagNamesShort;
+  for (std::vector<edm::ParameterSet>::const_iterator it = theElectronIDs_.begin(); it != theElectronIDs_.end(); ++it) {
+    tagNamesShort.push_back(it->getParameter<std::string>("idShortName"));
+  }
+
   ibooker_.cd();
   ibooker_.setCurrentFolder("Electron");
 
-
-  h_VetoID_TruePtvsFracPtTruePt = ibooker_.book2D("VetoID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Veto ID", 50,0.,500., 20, 0.8, 1.2);
-  h_VetoID_EtavsFracPtTruePt = ibooker_.book2D("VetoID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Veto ID", 50,-5.,5., 20, 0.8, 1.2);
-
-  h_LooseID_TruePtvsFracPtTruePt = ibooker_.book2D("LooseID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Loose ID", 50,0.,500., 20, 0.8, 1.2);
-  h_LooseID_EtavsFracPtTruePt = ibooker_.book2D("LooseID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Loose ID", 50,-5.,5., 20, 0.8, 1.2);
-  
-  h_MediumID_TruePtvsFracPtTruePt = ibooker_.book2D("MediumID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Medium ID", 50,0.,500., 20, 0.8, 1.2);
-  h_MediumID_EtavsFracPtTruePt = ibooker_.book2D("MediumID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Medium ID", 50,-5.,5., 20, 0.8, 1.2);
-
-  h_TightID_TruePtvsFracPtTruePt = ibooker_.book2D("TightID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Tight ID", 50,0.,500., 20, 0.8, 1.2);
-  h_TightID_EtavsFracPtTruePt = ibooker_.book2D("TightID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Tight ID", 50,-5.,5., 20, 0.8, 1.2);
+  int histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TruePt", "Pt vs TruePt for " + *i_shortName + "ID", 50,0.,500., 50,0.,500.);
+    h_Pt_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TrueEta", "Pt vs TrueEta for " + *i_shortName + "ID", 50,0.,500., 50,-5.,5.);
+    h_Eta_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TruePt", "Eta vs TruePt for " + *i_shortName + "ID", 50,-5.,5., 50,0.,500.);
+    h_Eta_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TrueEta", "Eta vs TrueEta for " + *i_shortName + "ID", 50,-5.,5., 50,-5.,5.);
+    ++histoID;
+  }
 
   ibooker_.setCurrentFolder("Electron/Helpers");
   
-  h_PtvsgenElectron = ibooker_.book1D("PtvsgenElectron","# genElectrons vs pt",50,0.,500.);
-  h_EtavsgenElectron = ibooker_.book1D("EtavsgenElectron","# genElectrons vs eta",50,-5.,5.);
+  h_Pt_genParticle = ibooker_.book1D("Pt_genElectron","pt vs total# genElectrons",50,0.,500.);
+  h_Eta_genParticle = ibooker_.book1D("Eta_genElectron","eta vs total# genElectrons",50,-5.,5.);
 
-  h_VetoID_PtvsrecoElectron = ibooker_.book1D("VetoID_PtvsrecoElectron","# recoElectrons vs pt for Veto ID",50,0.,500.);
-  h_VetoID_EtavsrecoElectron = ibooker_.book1D("VetoID_EtavsrecoElectron","# recoElectrons vs eta for Veto ID",50,-5.,5.);
-  h_LooseID_PtvsrecoElectron = ibooker_.book1D("LooseID_PtvsrecoElectron","# recoElectrons vs pt for Loose ID",50,0.,500.);
-  h_LooseID_EtavsrecoElectron = ibooker_.book1D("LooseID_EtavsrecoElectron","# recoElectrons vs eta for Loose ID",50,-5.,5.);
-  h_MediumID_PtvsrecoElectron = ibooker_.book1D("MediumID_PtvsrecoElectron","# recoElectrons vs pt for Medium ID",50,0.,500.);
-  h_MediumID_EtavsrecoElectron = ibooker_.book1D("MediumID_EtavsrecoElectron","# recoElectrons vs eta for Medium ID",50,-5.,5.);
-  h_TightID_PtvsrecoElectron = ibooker_.book1D("TightID_PtvsrecoElectron","# recoElectrons vs pt for Tight ID",50,0.,500.);
-  h_TightID_EtavsrecoElectron = ibooker_.book1D("TightID_EtavsrecoElectron","# recoElectrons vs eta for Tight ID",50,-5.,5.);
+  histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Pt_recoElectron","pt vs total# recoElectrons for " + *i_shortName + "ID/Iso",50,0.,500.);
+    h_Eta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Eta_recoElectron","# eta vs total# recoElectrons for " + *i_shortName + "ID/Iso",50,-5.,5.);
+    ++histoID;
+  }
   
   ibooker_.cd();  
+}
+
+//
+// -------------------------------------- fill histograms --------------------------------------------
+//
+
+void ElectronAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection){
+
+   for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
+  {
+     
+    // Match Gen <-> Reco
+    const reco::Candidate* matchedGenParticle = NULL;
+    for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
+        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedGenParticle = (*i_genParticle);
+    }
+    if(!matchedGenParticle) continue;
+  
+    h_Pt_recoParticle[histoID]->Fill(matchedGenParticle->pt());
+    h_Eta_recoParticle[histoID]->Fill(matchedGenParticle->eta());
+
+    h_Pt_TruePt[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->pt());
+    h_Pt_TrueEta[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->eta());
+    h_Eta_TruePt[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->pt());
+    h_Eta_TrueEta[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->eta());
+  }
 
 }
 
@@ -317,3 +264,6 @@ void ElectronAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 // -------------------------------------- functions --------------------------------------------
 //
 
+void ElectronAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const pat::Electron*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection){
+  fillHisto(histoID, (std::vector<const reco::Candidate*>*) recoCollection, (std::vector<const reco::Candidate*>*) genCollection);
+}

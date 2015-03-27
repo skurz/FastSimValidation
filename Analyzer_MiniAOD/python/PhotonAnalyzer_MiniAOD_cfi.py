@@ -6,8 +6,27 @@ PhotonAnalyzer_MiniAOD = cms.EDAnalyzer("PhotonAnalyzer_MiniAOD",
     PhotonCollection        = cms.InputTag("selectedPhotons"),
     GenPhotonCollection     = cms.InputTag("selectedGenPhotons"),
 
+    PhotonIDs	= cms.VPSet(
+    	cms.PSet(
+    		idString	= cms.string("PhotonCutBasedIDLoose"),
+    		idShortName = cms.string("Loose"),
+    		),
+    	cms.PSet(
+    		idString	= cms.string("PhotonCutBasedIDTight"),
+    		idShortName = cms.string("Tight"),
+    		),
+    	),
+
     #Debug
     Debug                     = cms.untracked.bool(False),
 
 )
 
+
+    #  Content of photonIDs()
+    #  No cutValues nedded!
+    #  PhotonCutBasedIDLoose -> (true,false)
+    #  PhotonCutBasedIDTight -> (true,false)
+
+    #  MediumID not stored (at least in MiniAOD) -> define selection cuts manually?
+      

@@ -64,17 +64,19 @@ protected:
   void endRun(edm::Run const& run, edm::EventSetup const& eSetup);
 
 private:
-  //histos booking function
+  //histos booking/filling function
   void bookHistos(DQMStore::IBooker &);
+  void fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection);
 
+  
   //other functions
-
+  void fillHisto(int histoID, std::vector<const pat::Muon*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection);
 
   //private variables
 
   //variables from config file
   edm::EDGetTokenT<reco::CandidateCollection> theMuonCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenParticleCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theGenPhotonCollection_;
   edm::EDGetTokenT<reco::VertexCollection> thePVCollection_;
 
   // cuts:
@@ -87,19 +89,16 @@ private:
 
 
   // Histograms
-  MonitorElement* h_LooseIDIso_TruePtvsFracPtTruePt;
-  MonitorElement* h_LooseIDIso_EtavsFracPtTruePt;
+  MonitorElement* h_Pt_TruePt[5];
+  MonitorElement* h_Pt_TrueEta[5];
+  MonitorElement* h_Eta_TruePt[5];
+  MonitorElement* h_Eta_TrueEta[5];
 
-  MonitorElement* h_TightIDIso_TruePtvsFracPtTruePt;
-  MonitorElement* h_TightIDIso_EtavsFracPtTruePt;
-
-  MonitorElement* h_PtvsgenMuon;
-  MonitorElement* h_EtavsgenMuon;
-  MonitorElement* h_LooseIDIso_PtvsrecoMuon;
-  MonitorElement* h_LooseIDIso_EtavsrecoMuon;
-  MonitorElement* h_TightIDIso_PtvsrecoMuon;
-  MonitorElement* h_TightIDIso_EtavsrecoMuon;
+  MonitorElement* h_Pt_recoParticle[5];
+  MonitorElement* h_Eta_recoParticle[5];
   
+  MonitorElement* h_Pt_genParticle;
+  MonitorElement* h_Eta_genParticle;
 };
 
 

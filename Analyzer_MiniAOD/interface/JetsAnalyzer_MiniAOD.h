@@ -82,19 +82,19 @@ private:
 
 
   // Histograms
-  MonitorElement* h_PtvsjetRelPtDiff;
-  MonitorElement* h_EtavsjetRelPtDiff;
+  MonitorElement* h_Pt_jetRelPtDiff;
+  MonitorElement* h_Eta_jetRelPtDiff;
 
-  MonitorElement* h_PtvsjetEtaDiff;
-  MonitorElement* h_EtavsjetEtaDiff;
+  MonitorElement* h_Pt_jetEtaDiff;
+  MonitorElement* h_Eta_jetEtaDiff;
 
-  MonitorElement* h_PtvsjetPhiDiff;
-  MonitorElement* h_EtavsjetPhiDiff;
+  MonitorElement* h_Pt_jetPhiDiff;
+  MonitorElement* h_Eta_jetPhiDiff;
 
-  MonitorElement* h_PtvsgenJet;
-  MonitorElement* h_EtavsgenJet;
-  MonitorElement* h_PtvsrecoJet;
-  MonitorElement* h_EtavsrecoJet;
+  MonitorElement* h_Pt_genJet;
+  MonitorElement* h_Eta_genJet;
+  MonitorElement* h_Pt_recoJet;
+  MonitorElement* h_Eta_recoJet;
 
 };
 

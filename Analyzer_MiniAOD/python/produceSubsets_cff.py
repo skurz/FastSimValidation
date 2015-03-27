@@ -111,11 +111,39 @@ producePhotons = cms.Sequence(
     selectedGenPhotons
     )
 
+# Create subset of Taus
+# loose/medium/tight working points are selected within the analyzer
+selectedTaus = cms.EDFilter("CandViewSelector",
+    src = cms.InputTag("slimmedTaus"),
+    cut = cms.string("abs(eta)<2.5 && pt>20."), 
+    filter = cms.bool(False)
+    )
+
+genTaus = cms.EDFilter("PdgIdAndStatusCandViewSelector",
+    src = cms.InputTag("packedGenParticles"), 
+    pdgId = cms.vint32(-15, 15),
+    status = cms.vint32(1),
+    filter = cms.bool(False)
+    )
+
+selectedGenTaus = cms.EDFilter("CandViewSelector",
+    src = cms.InputTag("genPhotons"),
+    cut = cms.string("abs(eta)<2.5 && pt>20."), 
+    filter = cms.bool(False)
+    )
+
+produceTaus = cms.Sequence(
+    selectedTaus *
+    genTaus *
+    selectedGenTaus
+    )
+
 
 # Sequences to produce all subsets
 produceSubsets = cms.Sequence(
     produceJets *
     produceMuons *
     produceElectrons *
-    producePhotons
+    producePhotons *
+    produceTaus
     )

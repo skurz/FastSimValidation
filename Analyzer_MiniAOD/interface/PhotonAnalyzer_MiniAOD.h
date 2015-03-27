@@ -66,6 +66,10 @@ protected:
 private:
   //histos booking function
   void bookHistos(DQMStore::IBooker &);
+  void fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection);
+
+  //other functions
+  void fillHisto(int histoID, std::vector<const pat::Photon*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection);
 
   //other functions
 
@@ -74,7 +78,9 @@ private:
 
   //variables from config file
   edm::EDGetTokenT<reco::CandidateCollection> thePhotonCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenParticleCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theGenPhotonCollection_;
+  std::vector<edm::ParameterSet> thePhotonIDs_;
+
 
   // cuts:
 
@@ -86,25 +92,16 @@ private:
 
 
   // Histogram
-  MonitorElement* h_LooseID_TruePtvsFracPtTruePt;
-  MonitorElement* h_LooseID_EtavsFracPtTruePt;
+  MonitorElement* h_Pt_TruePt[10];
+  MonitorElement* h_Pt_TrueEta[10];
+  MonitorElement* h_Eta_TruePt[10];
+  MonitorElement* h_Eta_TrueEta[10];
 
-//  MonitorElement* h_MediumID_TruePtvsFracPtTruePt;
-//  MonitorElement* h_MediumID_EtavsFracPtTruePt;
+  MonitorElement* h_Pt_recoParticle[10];
+  MonitorElement* h_Eta_recoParticle[10];
 
-  MonitorElement* h_TightID_TruePtvsFracPtTruePt;
-  MonitorElement* h_TightID_EtavsFracPtTruePt;
-
-  MonitorElement* h_PtvsgenPhoton;
-  MonitorElement* h_EtavsgenPhoton;
-
-  MonitorElement* h_LooseID_PtvsrecoPhoton;
-  MonitorElement* h_LooseID_EtavsrecoPhoton;
-//  MonitorElement* h_MediumID_PtvsrecoPhoton;
-//  MonitorElement* h_MediumID_EtavsrecoPhoton;
-  MonitorElement* h_TightID_PtvsrecoPhoton;
-  MonitorElement* h_TightID_EtavsrecoPhoton;
-  
+  MonitorElement* h_Pt_genParticle;
+  MonitorElement* h_Eta_genParticle;
 };
 
 

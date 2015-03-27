@@ -27,7 +27,7 @@ MuonAnalyzer_MiniAOD::MuonAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   
   // Get parameters from configuration file
   theMuonCollection_         = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("MuonCollection"));
-  theGenParticleCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenMuonCollection"));
+  theGenPhotonCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenMuonCollection"));
   thePVCollection_           = consumes<reco::VertexCollection>(ps.getParameter<edm::InputTag>("PVCollection"));
 
 
@@ -103,16 +103,16 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
   }
 
   // GenMuons
-  edm::Handle<reco::CandidateCollection> genParticleCollection;
-  e.getByToken(theGenParticleCollection_, genParticleCollection);
-  if ( !genParticleCollection.isValid() ) 
+  edm::Handle<reco::CandidateCollection> genMuonCollection;
+  e.getByToken(theGenPhotonCollection_, genMuonCollection);
+  if ( !genMuonCollection.isValid() ) 
   {
     edm::LogError ("MuonAnalyzer_MiniAOD") << "invalid collection: genParticles" << "\n";
     return;
   }
 
   std::vector<const pat::PackedGenParticle*> genMuons;
-  for (reco::CandidateCollection::const_iterator i_genMuon = genParticleCollection->begin(); i_genMuon != genParticleCollection->end(); ++i_genMuon)
+  for (reco::CandidateCollection::const_iterator i_genMuon = genMuonCollection->begin(); i_genMuon != genMuonCollection->end(); ++i_genMuon)
   {
     try{
       genMuons.push_back(dynamic_cast<const pat::PackedGenParticle*>(&(*i_genMuon)));
@@ -160,66 +160,18 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
   // Fill Histrograms
   //-------------------------------
 
-  // Loose
-  for (std::vector<const pat::Muon *>::const_iterator i_looseMuon = looseMuons.begin(); i_looseMuon != looseMuons.end(); ++i_looseMuon)
-  {
-    const pat::Muon* i_looseMuonPtr = *i_looseMuon;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenMuon = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) {
-        if(deltaR(*i_looseMuonPtr, **i_genMuon) < 0.3) matchedGenMuon = (*i_genMuon);
-    }
-    if(!matchedGenMuon) continue;
-	
-  	h_LooseIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
-  	h_LooseIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
-
-    h_LooseIDIso_TruePtvsFracPtTruePt->Fill(matchedGenMuon->pt(), i_looseMuonPtr->pt() / matchedGenMuon->pt());
-    h_LooseIDIso_EtavsFracPtTruePt->Fill(matchedGenMuon->eta(), i_looseMuonPtr->pt() / matchedGenMuon->pt());
-  }
-
-  // Tight
-  for (std::vector<const pat::Muon *>::const_iterator i_tightMuon = tightMuons.begin(); i_tightMuon != tightMuons.end(); ++i_tightMuon)
-  {
-    const pat::Muon* i_tightMuonPtr = *i_tightMuon;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenMuon = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) {
-        if(deltaR(*i_tightMuonPtr, **i_genMuon) < 0.3) matchedGenMuon = (*i_genMuon);
-    }
-    if(!matchedGenMuon) continue;
-	
-  	h_TightIDIso_PtvsrecoMuon->Fill(matchedGenMuon->pt());
-  	h_TightIDIso_EtavsrecoMuon->Fill(matchedGenMuon->eta());
-
-    h_TightIDIso_TruePtvsFracPtTruePt->Fill(matchedGenMuon->pt(), i_tightMuonPtr->pt() / matchedGenMuon->pt());
-    h_TightIDIso_EtavsFracPtTruePt->Fill(matchedGenMuon->eta(), i_tightMuonPtr->pt() / matchedGenMuon->pt());
-  }
+  fillHisto(0, &looseMuons, &genMuons);
+  fillHisto(1, &tightMuons, &genMuons);
   
   // Gen
   for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
   {
-    h_PtvsgenMuon->Fill((*i_genMuon)->pt());
-    h_EtavsgenMuon->Fill((*i_genMuon)->eta());
+    h_Pt_genParticle->Fill((*i_genMuon)->pt());
+    h_Eta_genParticle->Fill((*i_genMuon)->eta());
   }
 
 
-  //if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
-  if(debug_ && genMuons.size() != looseMuons.size()){
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
-    {
-      std::cout << (*i_genMuon)->pt() << "; ";
-    }
-    std::cout << std::endl;
-
-    for (std::vector<const pat::Muon *>::const_iterator i_looseMuon = looseMuons.begin(); i_looseMuon != looseMuons.end(); ++i_looseMuon)
-    {
-      std::cout << (*i_looseMuon)->pt() << "; ";
-    }
-    std::cout << std::endl;
-  }
+  if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
 
 }
 //
@@ -245,32 +197,69 @@ void MuonAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& eS
 //
 void MuonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
+  std::vector<TString> tagNamesShort;
+  tagNamesShort.push_back("Loose");
+  tagNamesShort.push_back("Tight");
+
   ibooker_.cd();
   ibooker_.setCurrentFolder("Muon");
 
-
-  h_LooseIDIso_TruePtvsFracPtTruePt = ibooker_.book2D("LooseIDIso_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Loose ID/Iso", 50,0.,500., 20, 0.8, 1.2);
-  h_LooseIDIso_EtavsFracPtTruePt = ibooker_.book2D("LooseIDIso_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Loose ID/Iso", 50,-5.,5., 20, 0.8, 1.2);
-
-  h_TightIDIso_TruePtvsFracPtTruePt = ibooker_.book2D("TightIDIso_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Tight ID/Iso", 50,0.,500., 20, 0.8, 1.2);
-  h_TightIDIso_EtavsFracPtTruePt = ibooker_.book2D("TightIDIso_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Tight ID/Iso", 50,-5.,5., 20, 0.8, 1.2);
+  int histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_TruePt[histoID] = ibooker_.book2D(*i_shortName + "IDIso_Pt_TruePt", "Pt vs TruePt for " + *i_shortName + "ID/Iso", 50,0.,500., 50,0.,500.);
+    h_Pt_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "IDIso_Pt_TrueEta", "Pt vs TrueEta for " + *i_shortName + "ID/Iso", 50,0.,500., 50,-5.,5.);
+    h_Eta_TruePt[histoID] = ibooker_.book2D(*i_shortName + "IDIso_Eta_TruePt", "Eta vs TruePt for " + *i_shortName + "ID/Iso", 50,-5.,5., 50,0.,500.);
+    h_Eta_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "IDIso_Eta_TrueEta", "Eta vs TrueEta for " + *i_shortName + "ID/Iso", 50,-5.,5., 50,-5.,5.);
+    ++histoID;
+  }
 
   ibooker_.setCurrentFolder("Muon/Helpers");
   
-  h_PtvsgenMuon = ibooker_.book1D("PtvsgenMuon","# genMuons vs pt",50,0.,500.);
-  h_EtavsgenMuon = ibooker_.book1D("EtavsgenMuon","# genMuons vs eta",50,-5.,5.);
+  h_Pt_genParticle = ibooker_.book1D("Pt_genMuon","pt vs total# genMuons",50,0.,500.);
+  h_Eta_genParticle = ibooker_.book1D("Eta_genMuon","eta vs total# genMuons",50,-5.,5.);
 
-  h_LooseIDIso_PtvsrecoMuon = ibooker_.book1D("LooseIDIso_PtvsrecoMuon","# recoMuons vs pt for Loose ID/Iso",50,0.,500.);
-  h_LooseIDIso_EtavsrecoMuon = ibooker_.book1D("LooseIDIso_EtavsrecoMuon","# recoMuons vs eta for Loose ID/Iso",50,-5.,5.);
-  h_TightIDIso_PtvsrecoMuon = ibooker_.book1D("TightIDIso_PtvsrecoMuon","# recoMuons vs pt for Tight ID/Iso",50,0.,500.);
-  h_TightIDIso_EtavsrecoMuon = ibooker_.book1D("TightIDIso_EtavsrecoMuon","# recoMuons vs eta for Tight ID/Iso",50,-5.,5.);
+  histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "IDIso_Pt_recoMuon","pt vs total# recoMuons for " + *i_shortName + "ID/Iso",50,0.,500.);
+    h_Eta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "IDIso_Eta_recoMuon","# eta vs total# recoMuons for " + *i_shortName + "ID/Iso",50,-5.,5.);
+    ++histoID;
+  }
   
   ibooker_.cd();  
 
 }
 
+//
+// -------------------------------------- fill histograms --------------------------------------------
+//
+
+void MuonAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection){
+
+   for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
+  {
+     
+    // Match Gen <-> Reco
+    const reco::Candidate* matchedGenParticle = NULL;
+    for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
+        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedGenParticle = (*i_genParticle);
+    }
+    if(!matchedGenParticle) continue;
+  
+    h_Pt_recoParticle[histoID]->Fill(matchedGenParticle->pt());
+    h_Eta_recoParticle[histoID]->Fill(matchedGenParticle->eta());
+
+    h_Pt_TruePt[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->pt());
+    h_Pt_TrueEta[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->eta());
+    h_Eta_TruePt[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->pt());
+    h_Eta_TrueEta[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->eta());
+  }
+
+}
 
 //
 // -------------------------------------- functions --------------------------------------------
 //
 
+void MuonAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const pat::Muon*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection){
+  fillHisto(histoID, (std::vector<const reco::Candidate*>*) recoCollection, (std::vector<const reco::Candidate*>*) genCollection);
+}

@@ -64,17 +64,20 @@ protected:
   void endRun(edm::Run const& run, edm::EventSetup const& eSetup);
 
 private:
-  //histos booking function
+  //histos booking/filling function
   void bookHistos(DQMStore::IBooker &);
+  void fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection);
 
   //other functions
+  void fillHisto(int histoID, std::vector<const pat::Electron*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection);
 
 
   //private variables
 
   //variables from config file
   edm::EDGetTokenT<reco::CandidateCollection> theElectronCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenParticleCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theGenElectronCollection_;
+  std::vector<edm::ParameterSet> theElectronIDs_;
 
   // cuts:
 
@@ -86,28 +89,16 @@ private:
 
 
   // Histograms
-  MonitorElement* h_VetoID_TruePtvsFracPtTruePt;
-  MonitorElement* h_VetoID_EtavsFracPtTruePt;  
+  MonitorElement* h_Pt_TruePt[20];
+  MonitorElement* h_Pt_TrueEta[20];
+  MonitorElement* h_Eta_TruePt[20];
+  MonitorElement* h_Eta_TrueEta[20];
 
-  MonitorElement* h_LooseID_TruePtvsFracPtTruePt;
-  MonitorElement* h_LooseID_EtavsFracPtTruePt;
+  MonitorElement* h_Pt_recoParticle[20];
+  MonitorElement* h_Eta_recoParticle[20];
 
-  MonitorElement* h_MediumID_TruePtvsFracPtTruePt;
-  MonitorElement* h_MediumID_EtavsFracPtTruePt;
-
-  MonitorElement* h_TightID_TruePtvsFracPtTruePt;
-  MonitorElement* h_TightID_EtavsFracPtTruePt;
-
-  MonitorElement* h_PtvsgenElectron;
-  MonitorElement* h_EtavsgenElectron;
-  MonitorElement* h_VetoID_PtvsrecoElectron;
-  MonitorElement* h_VetoID_EtavsrecoElectron;
-  MonitorElement* h_LooseID_PtvsrecoElectron;
-  MonitorElement* h_LooseID_EtavsrecoElectron;
-  MonitorElement* h_MediumID_PtvsrecoElectron;
-  MonitorElement* h_MediumID_EtavsrecoElectron;
-  MonitorElement* h_TightID_PtvsrecoElectron;
-  MonitorElement* h_TightID_EtavsrecoElectron;
+  MonitorElement* h_Pt_genParticle;
+  MonitorElement* h_Eta_genParticle;
   
 };
 

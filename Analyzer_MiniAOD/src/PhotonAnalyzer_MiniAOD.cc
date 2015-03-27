@@ -27,7 +27,9 @@ PhotonAnalyzer_MiniAOD::PhotonAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   
   // Get parameters from configuration file
   thePhotonCollection_         = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("PhotonCollection"));
-  theGenParticleCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenPhotonCollection"));
+  theGenPhotonCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenPhotonCollection"));
+  thePhotonIDs_ = ps.getParameter<std::vector<edm::ParameterSet>>("PhotonIDs");
+  
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -102,7 +104,7 @@ void PhotonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const&
 
   // GenPhotons
   edm::Handle<reco::CandidateCollection> genParticleCollection;
-  e.getByToken(theGenParticleCollection_, genParticleCollection);
+  e.getByToken(theGenPhotonCollection_, genParticleCollection);
   if ( !genParticleCollection.isValid() ) 
   {
     edm::LogError ("PhotonAnalyzer_MiniAOD") << "invalid collection: genParticles" << "\n";
@@ -119,33 +121,48 @@ void PhotonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const&
     }
   }
 
+  // PhotonIDs
+  std::vector<std::string> idStrings;
+  for (std::vector<edm::ParameterSet>::const_iterator it = thePhotonIDs_.begin(); it != thePhotonIDs_.end(); ++it) {
+    idStrings.push_back(it->getParameter<std::string>("idString"));
+  }
+
 
   //-------------------------------
   //--- Create Subsets
   //-------------------------------
-  // veto/loose/medium/tight ID
-  std::vector<const pat::Photon*> vetoPhotons;
-  std::vector<const pat::Photon*> loosePhotons;
-  std::vector<const pat::Photon*> mediumPhotons;
-  std::vector<const pat::Photon*> tightPhotons;
+  // Create subset for every ID
+  std::vector<std::vector<const pat::Photon*>> idPhotons;
 
-  for (std::vector<const pat::Photon *>::const_iterator i_patPhoton = patPhotons.begin(); i_patPhoton != patPhotons.end(); ++i_patPhoton)
-  {
-    const pat::Photon* i_patPhotonPtr = *i_patPhoton;
+  for(std::vector<std::string>::const_iterator i_phID = idStrings.begin(); i_phID != idStrings.end(); ++i_phID){
 
-    if(debug_)
-    for(std::vector<std::pair<std::string,bool>>::const_iterator i_phIDs = i_patPhotonPtr->photonIDs().begin(); i_phIDs != i_patPhotonPtr->photonIDs().end(); ++i_phIDs){
-      //std::cout << i_phIDs->first << std::endl;
+    std::vector<const pat::Photon*> passedPhs;
+    for (std::vector<const pat::Photon *>::const_iterator i_patPhoton = patPhotons.begin(); i_patPhoton != patPhotons.end(); ++i_patPhoton){
+      if((*i_patPhoton)->photonID(*i_phID)){
+        passedPhs.push_back((*i_patPhoton));
+      }
     }
 
-      /* Content of photonIDs()
-      PhotonCutBasedIDLoose
-      PhotonCutBasedIDTight
-      */
+    idPhotons.push_back(passedPhs);
+  }
 
-    if(i_patPhotonPtr->photonID("PhotonCutBasedIDLoose")) loosePhotons.push_back(i_patPhotonPtr);
-    //if(i_patPhotonPtr->photonID("cutBasedPhotonID-CSA14-PU20bx25-V0-standalone-medium") > 0.5) mediumPhotons.push_back(i_patPhotonPtr);
-    if(i_patPhotonPtr->photonID("PhotonCutBasedIDTight")) tightPhotons.push_back(i_patPhotonPtr);
+  /*// MediumID not included (at least in MiniAOD)
+    // Perform cuts manually?
+    
+    if(std::abs(i_patPhotonPtr->eta()) < 1.5){
+      if(i_patPhotonPtr->passElectronVeto() && i_patPhotonPtr->hadTowOverEm() < 0.05 && i_patPhotonPtr->sigmaIetaIeta() < 0.012 && i_patPhotonPtr->chargedHadronIso() < 2.6 && i_patPhotonPtr->neutralHadronIso() < 3.5 + 0.04*i_patPhotonPtr->pt() && i_patPhotonPtr->photonIso() < 1.3 + 0.005*i_patPhotonPtr->pt()) loose.push_back(i_patPhotonPtr);
+    }else
+      if(i_patPhotonPtr->passElectronVeto() && i_patPhotonPtr->hadTowOverEm() < 0.05 && i_patPhotonPtr->sigmaIetaIeta() < 0.034 && i_patPhotonPtr->chargedHadronIso() < 2.3 && i_patPhotonPtr->neutralHadronIso() < 2.9 + 0.04*i_patPhotonPtr->pt()) loose.push_back(i_patPhotonPtr);
+    //Use Rho-corrected Areas??
+  */
+
+
+  if(debug_)
+  for (std::vector<const pat::Photon *>::const_iterator i_patPhoton = patPhotons.begin(); i_patPhoton != patPhotons.end(); ++i_patPhoton)
+  {    
+    for(std::vector<std::pair<std::string,bool>>::const_iterator i_phIDs = (*i_patPhoton)->photonIDs().begin(); i_phIDs != (*i_patPhoton)->photonIDs().end(); ++i_phIDs){
+      //std::cout << i_phIDs->first << std::endl;
+    }
   }
 
 
@@ -153,74 +170,20 @@ void PhotonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const&
   // Fill Histrograms
   //-------------------------------
 
-  // Loose
-  for (std::vector<const pat::Photon *>::const_iterator i_loosePhoton = loosePhotons.begin(); i_loosePhoton != loosePhotons.end(); ++i_loosePhoton)
-  {
-    const pat::Photon* i_loosePhotonPtr = *i_loosePhoton;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenPhoton = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) {
-        if(deltaR(*i_loosePhotonPtr, **i_genPhoton) < 0.3) matchedGenPhoton = (*i_genPhoton);
-    }
-
-    if(!matchedGenPhoton){ continue; }
-  
-    h_LooseID_PtvsrecoPhoton->Fill(matchedGenPhoton->pt());
-    h_LooseID_EtavsrecoPhoton->Fill(matchedGenPhoton->eta());
-
-    h_LooseID_TruePtvsFracPtTruePt->Fill(matchedGenPhoton->pt(), i_loosePhotonPtr->pt() / matchedGenPhoton->pt());
-    h_LooseID_EtavsFracPtTruePt->Fill(matchedGenPhoton->eta(), i_loosePhotonPtr->pt() / matchedGenPhoton->pt());
+  int histID = 0;
+  for(std::vector<std::vector<const pat::Photon*>>::iterator i_idPhotons = idPhotons.begin(); i_idPhotons != idPhotons.end(); ++i_idPhotons){
+    fillHisto(histID, &(*i_idPhotons), &genPhotons);
+    //std::cout << (&(*it))->size() << std::endl;
+    ++histID;
   }
 
-/*  // Medium
-  for (std::vector<const pat::Photon *>::const_iterator i_mediumPhoton = mediumPhotons.begin(); i_mediumPhoton != mediumPhotons.end(); ++i_mediumPhoton)
-  {
-    const pat::Photon* i_mediumPhotonPtr = *i_mediumPhoton;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenPhoton = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) {
-        if(deltaR(*i_mediumPhotonPtr, **i_genPhoton) < 0.3) matchedGenPhoton = (*i_genPhoton);
-    }
-    if(!matchedGenPhoton) continue;
-  
-    h_MediumID_PtvsrecoPhoton->Fill(matchedGenPhoton->pt());
-    h_MediumID_EtavsrecoPhoton->Fill(matchedGenPhoton->eta());
-
-    h_MediumID_TruePtvsFracPtTruePt->Fill(matchedGenPhoton->pt(), i_mediumPhotonPtr->pt() / matchedGenPhoton->pt());
-    h_MediumID_EtavsFracPtTruePt->Fill(matchedGenPhoton->eta(), i_mediumPhotonPtr->pt() / matchedGenPhoton->pt());
-  }
-*/
-  // Tight
-  for (std::vector<const pat::Photon *>::const_iterator i_tightPhoton = tightPhotons.begin(); i_tightPhoton != tightPhotons.end(); ++i_tightPhoton)
-  {
-    const pat::Photon* i_tightPhotonPtr = *i_tightPhoton;
-    
-    // Match Gen <-> Reco
-    const pat::PackedGenParticle* matchedGenPhoton = NULL;
-    for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) {
-        if(deltaR(*i_tightPhotonPtr, **i_genPhoton) < 0.3) matchedGenPhoton = (*i_genPhoton);
-    }
-    if(!matchedGenPhoton) continue;
-	
-  	h_TightID_PtvsrecoPhoton->Fill(matchedGenPhoton->pt());
-  	h_TightID_EtavsrecoPhoton->Fill(matchedGenPhoton->eta());
-
-    h_TightID_TruePtvsFracPtTruePt->Fill(matchedGenPhoton->pt(), i_tightPhotonPtr->pt() / matchedGenPhoton->pt());
-    h_TightID_EtavsFracPtTruePt->Fill(matchedGenPhoton->eta(), i_tightPhotonPtr->pt() / matchedGenPhoton->pt());
-  }
 
   // Gen
   for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) 
   {
-    h_PtvsgenPhoton->Fill((*i_genPhoton)->pt());
-    h_EtavsgenPhoton->Fill((*i_genPhoton)->eta());
+    h_Pt_genParticle->Fill((*i_genPhoton)->pt());
+    h_Eta_genParticle->Fill((*i_genPhoton)->eta());
   }
-
-
-  if(debug_ && genPhotons.size() > 0) std::cout << genPhotons.size() << "; " << patPhotons.size() << "; " << loosePhotons.size() << "; " << tightPhotons.size() << std::endl;
-
 
 }
 //
@@ -246,29 +209,34 @@ void PhotonAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& 
 //
 void PhotonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
+  std::vector<TString> tagNamesShort;
+  for (std::vector<edm::ParameterSet>::const_iterator it = thePhotonIDs_.begin(); it != thePhotonIDs_.end(); ++it) {
+    tagNamesShort.push_back(it->getParameter<std::string>("idShortName"));
+  }
+
   ibooker_.cd();
   ibooker_.setCurrentFolder("Photon");
 
-  h_LooseID_TruePtvsFracPtTruePt = ibooker_.book2D("LooseID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Loose ID", 50,0.,500., 20, 0.8, 1.2);
-  h_LooseID_EtavsFracPtTruePt = ibooker_.book2D("LooseID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Loose ID", 50,-5.,5., 20, 0.8, 1.2);
-  
-//  h_MediumID_TruePtvsFracPtTruePt = ibooker_.book2D("MediumID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Medium ID", 50,0.,500., 20, 0.8, 1.2);
-//  h_MediumID_EtavsFracPtTruePt = ibooker_.book2D("MediumID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Medium ID", 50,-5.,5., 20, 0.8, 1.2);
-
-  h_TightID_TruePtvsFracPtTruePt = ibooker_.book2D("TightID_TruePtvsFracPtTruePt", "TruePt vs Pt / TruePt for Tight ID", 50,0.,500., 20, 0.8, 1.2);
-  h_TightID_EtavsFracPtTruePt = ibooker_.book2D("TightID_EtavsFracPtTruePt", "Eta vs Pt / TruePt for Tight ID", 50,-5.,5., 20, 0.8, 1.2);
+  int histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TruePt", "Pt vs TruePt for " + *i_shortName + "ID", 50,0.,500., 50,0.,500.);
+    h_Pt_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TrueEta", "Pt vs TrueEta for " + *i_shortName + "ID", 50,0.,500., 50,-5.,5.);
+    h_Eta_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TruePt", "Eta vs TruePt for " + *i_shortName + "ID", 50,-5.,5., 50,0.,500.);
+    h_Eta_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TrueEta", "Eta vs TrueEta for " + *i_shortName + "ID", 50,-5.,5., 50,-5.,5.);
+    ++histoID;
+  }
 
   ibooker_.setCurrentFolder("Photon/Helpers");
   
-  h_PtvsgenPhoton = ibooker_.book1D("PtvsgenPhoton","# genPhotons vs pt",50,0.,500.);
-  h_EtavsgenPhoton = ibooker_.book1D("EtavsgenPhoton","# genPhotons vs eta",50,-5.,5.);
+  h_Pt_genParticle = ibooker_.book1D("Pt_genPhoton","pt vs total# genPhotons",50,0.,500.);
+  h_Eta_genParticle = ibooker_.book1D("Eta_genPhoton","eta vs total# genPhotons",50,-5.,5.);
 
-  h_LooseID_PtvsrecoPhoton = ibooker_.book1D("LooseID_PtvsrecoPhoton","# recoPhotons vs pt for Loose ID",50,0.,500.);
-  h_LooseID_EtavsrecoPhoton = ibooker_.book1D("LooseID_EtavsrecoPhoton","# recoPhotons vs eta for Loose ID",50,-5.,5.);
-//  h_MediumID_PtvsrecoPhoton = ibooker_.book1D("MediumID_PtvsrecoPhoton","# recoPhotons vs pt for Medium ID",50,0.,500.);
-//  h_MediumID_EtavsrecoPhoton = ibooker_.book1D("MediumID_EtavsrecoPhoton","# recoPhotons vs eta for Medium ID",50,-5.,5.);
-  h_TightID_PtvsrecoPhoton = ibooker_.book1D("TightID_PtvsrecoPhoton","# recoPhotons vs pt for Tight ID",50,0.,500.);
-  h_TightID_EtavsrecoPhoton = ibooker_.book1D("TightID_EtavsrecoPhoton","# recoPhotons vs eta for Tight ID",50,-5.,5.);
+  histoID = 0;
+  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    h_Pt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Pt_recoPhoton","pt vs total# recoPhotons for " + *i_shortName + "ID/Iso",50,0.,500.);
+    h_Eta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Eta_recoPhoton","# eta vs total# recoPhotons for " + *i_shortName + "ID/Iso",50,-5.,5.);
+    ++histoID;
+  }
   
   ibooker_.cd();  
 
@@ -276,6 +244,38 @@ void PhotonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 
 
 //
+// -------------------------------------- fill histograms --------------------------------------------
+//
+
+void PhotonAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection){
+
+   for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
+  {
+     
+    // Match Gen <-> Reco
+    const reco::Candidate* matchedGenParticle = NULL;
+    for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
+        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedGenParticle = (*i_genParticle);
+    }
+    if(!matchedGenParticle) continue;
+  
+    h_Pt_recoParticle[histoID]->Fill(matchedGenParticle->pt());
+    h_Eta_recoParticle[histoID]->Fill(matchedGenParticle->eta());
+
+    h_Pt_TruePt[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->pt());
+    h_Pt_TrueEta[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->eta());
+    h_Eta_TruePt[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->pt());
+    h_Eta_TrueEta[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->eta());
+  }
+
+}
+
+
+//
 // -------------------------------------- functions --------------------------------------------
 //
+
+void PhotonAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const pat::Photon*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection){
+  fillHisto(histoID, (std::vector<const reco::Candidate*>*) recoCollection, (std::vector<const reco::Candidate*>*) genCollection);
+}
 
