@@ -136,24 +136,24 @@ for (std::vector<const pat::Jet *>::const_iterator i_patJet = patJets.begin(); i
   if(!matchedGenJet) continue;
 
   // Fill histograms 
-  h_Pt_recoJet->Fill(matchedGenJet->pt());
-  h_Eta_recoJet->Fill(matchedGenJet->eta());
+  h_truePt_recoJet->Fill(matchedGenJet->pt());
+  h_trueEta_recoJet->Fill(matchedGenJet->eta());
 
-  h_Pt_jetRelPtDiff->Fill(matchedGenJet->pt(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
-  h_Eta_jetRelPtDiff->Fill(matchedGenJet->eta(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
+  h_truePt_jetRelPtDiff->Fill(matchedGenJet->pt(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
+  h_trueEta_jetRelPtDiff->Fill(matchedGenJet->eta(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
 
-  h_Pt_jetEtaDiff->Fill(matchedGenJet->pt(), i_patJetPtr->eta()-matchedGenJet->eta());
-  h_Eta_jetEtaDiff->Fill(matchedGenJet->eta(), i_patJetPtr->eta()-matchedGenJet->eta());
+  h_truePt_jetEtaDiff->Fill(matchedGenJet->pt(), i_patJetPtr->eta()-matchedGenJet->eta());
+  h_trueEta_jetEtaDiff->Fill(matchedGenJet->eta(), i_patJetPtr->eta()-matchedGenJet->eta());
 
-  h_Pt_jetPhiDiff->Fill(matchedGenJet->pt(), i_patJetPtr->phi()-matchedGenJet->phi());
-  h_Eta_jetPhiDiff->Fill(matchedGenJet->eta(), i_patJetPtr->phi()-matchedGenJet->phi());  
+  h_truePt_jetPhiDiff->Fill(matchedGenJet->pt(), i_patJetPtr->phi()-matchedGenJet->phi());
+  h_trueEta_jetPhiDiff->Fill(matchedGenJet->eta(), i_patJetPtr->phi()-matchedGenJet->phi());  
 }
 
 // Gen
 for (std::vector<const reco::GenJet*>::const_iterator i_genjet = genJets.begin(); i_genjet != genJets.end(); ++i_genjet) 
 {
-    h_Pt_genJet->Fill((*i_genjet)->pt());
-    h_Eta_genJet->Fill((*i_genjet)->eta());
+    h_truePt_genJet->Fill((*i_genjet)->pt());
+    h_trueEta_genJet->Fill((*i_genjet)->eta());
 }
 
   // b Tagging TODO!
@@ -214,23 +214,23 @@ void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   
   // TH2
 
-  h_Pt_jetRelPtDiff = ibooker_.book2D("Pt_jetRelPtDiff","true pt vs (reco pt - true pt) / (true pt)",50,0.,500.,20,-1.,1.);
-  h_Eta_jetRelPtDiff = ibooker_.book2D("Eta_jetRelPtDiff","true eta vs (reco pt - true pt) / (true pt)",50,-5.,5.,20,-1.,1.);
+  h_truePt_jetRelPtDiff = ibooker_.book2D("truePt_jetRelPtDiff","true pt vs (reco pt - true pt) / (true pt)",50,0.,500.,20,-1.,1.);
+  h_trueEta_jetRelPtDiff = ibooker_.book2D("trueEta_jetRelPtDiff","true eta vs (reco pt - true pt) / (true pt)",50,-5.,5.,20,-1.,1.);
 
-  h_Pt_jetEtaDiff = ibooker_.book2D("Pt_jetEtaDiff","true pt vs (reco eta - true eta)",50,0.,500.,20,-0.5,0.5);
-  h_Eta_jetEtaDiff = ibooker_.book2D("Eta_jetEtaDiff","true eta vs (reco eta - true eta)",50,-5.,5.,20,-1.,1.);
+  h_truePt_jetEtaDiff = ibooker_.book2D("truePt_jetEtaDiff","true pt vs (reco eta - true eta)",50,0.,500.,20,-0.5,0.5);
+  h_trueEta_jetEtaDiff = ibooker_.book2D("trueEta_jetEtaDiff","true eta vs (reco eta - true eta)",50,-5.,5.,20,-0.5,0.5);
 
-  h_Pt_jetPhiDiff = ibooker_.book2D("Pt_jetPhiDiff","true pt vs (reco phi - true phi)",50,0.,500.,20,-0.5,0.5);
-  h_Eta_jetPhiDiff = ibooker_.book2D("Eta_jetPhiDiff","true eta vs (reco phi - true phi)",50,-5.,5.,20,-1.,1.);
+  h_truePt_jetPhiDiff = ibooker_.book2D("truePt_jetPhiDiff","true pt vs (reco phi - true phi)",50,0.,500.,20,-0.5,0.5);
+  h_trueEta_jetPhiDiff = ibooker_.book2D("trueEta_jetPhiDiff","true eta vs (reco phi - true phi)",50,-5.,5.,20,-0.5,0.5);
 
 
   ibooker_.setCurrentFolder("Jets/Helpers");
 
-  h_Pt_genJet = ibooker_.book1D("Pt_genJet","pt vs total# genJets",50,0.,500.);
-  h_Eta_genJet = ibooker_.book1D("Eta_genJet","eta vs total# genJets",50,-5.,5.);
+  h_truePt_genJet = ibooker_.book1D("truePt_genJet","true pt vs total# genJets",50,0.,500.);
+  h_trueEta_genJet = ibooker_.book1D("trueEta_genJet","true eta vs total# genJets",50,-5.,5.);
 
-  h_Pt_recoJet = ibooker_.book1D("Pt_recoJet","pt vs total# recoJets",50,0.,500.);
-  h_Eta_recoJet = ibooker_.book1D("Eta_recoJet","eta vs total# genJets",50,-5.,5.);
+  h_truePt_recoJet = ibooker_.book1D("truePt_recoJet","true pt vs total# recoJets",50,0.,500.);
+  h_trueEta_recoJet = ibooker_.book1D("trueEta_recoJet","true eta vs total# genJets",50,-5.,5.);
 
   ibooker_.cd();  
 

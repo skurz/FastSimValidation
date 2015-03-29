@@ -9,22 +9,22 @@ ElectronAnalyzer_MiniAOD = cms.EDAnalyzer("ElectronAnalyzer_MiniAOD",
     ElectronIDs	= cms.VPSet(
     	cms.PSet(
     		idString	= cms.string("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-veto"),
-    		idShortName = cms.string("Veto"),
+    		idShortName = cms.string("veto"),
     		cutValue	= cms.double(0.5)
     		),
     	cms.PSet(
     		idString	= cms.string("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-loose"),
-    		idShortName = cms.string("Loose"),
+    		idShortName = cms.string("loose"),
     		cutValue	= cms.double(0.5)
     		),
     	cms.PSet(
     		idString	= cms.string("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-medium"),
-    		idShortName = cms.string("Medium"),
+    		idShortName = cms.string("medium"),
     		cutValue	= cms.double(0.5)
     		),
     	cms.PSet(
     		idString	= cms.string("cutBasedElectronID-CSA14-PU20bx25-V0-standalone-tight"),
-    		idShortName = cms.string("Tight"),
+    		idShortName = cms.string("tight"),
     		cutValue	= cms.double(0.5)
     		)
     	),

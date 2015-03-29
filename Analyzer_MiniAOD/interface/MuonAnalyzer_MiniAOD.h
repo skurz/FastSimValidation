@@ -89,16 +89,16 @@ private:
 
 
   // Histograms
-  MonitorElement* h_Pt_TruePt[5];
-  MonitorElement* h_Pt_TrueEta[5];
-  MonitorElement* h_Eta_TruePt[5];
-  MonitorElement* h_Eta_TrueEta[5];
+  MonitorElement* h_truePt_pt[5];
+  MonitorElement* h_truePt_eta[5];
+  MonitorElement* h_trueEta_pt[5];
+  MonitorElement* h_trueEta_eta[5];
 
-  MonitorElement* h_Pt_recoParticle[5];
-  MonitorElement* h_Eta_recoParticle[5];
+  MonitorElement* h_truePt_recoParticle[5];
+  MonitorElement* h_trueEta_recoParticle[5];
   
-  MonitorElement* h_Pt_genParticle;
-  MonitorElement* h_Eta_genParticle;
+  MonitorElement* h_truePt_genParticle;
+  MonitorElement* h_trueEta_genParticle;
 };
 
 

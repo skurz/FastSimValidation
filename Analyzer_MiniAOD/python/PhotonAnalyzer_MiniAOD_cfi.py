@@ -9,11 +9,11 @@ PhotonAnalyzer_MiniAOD = cms.EDAnalyzer("PhotonAnalyzer_MiniAOD",
     PhotonIDs	= cms.VPSet(
     	cms.PSet(
     		idString	= cms.string("PhotonCutBasedIDLoose"),
-    		idShortName = cms.string("Loose"),
+    		idShortName = cms.string("loose"),
     		),
     	cms.PSet(
     		idString	= cms.string("PhotonCutBasedIDTight"),
-    		idShortName = cms.string("Tight"),
+    		idShortName = cms.string("tight"),
     		),
     	),
 

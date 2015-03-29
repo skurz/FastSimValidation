@@ -168,8 +168,8 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
   // Gen
   for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) 
   {
-    h_Pt_genParticle->Fill((*i_genElectron)->pt());
-    h_Eta_genParticle->Fill((*i_genElectron)->eta());
+    h_truePt_genParticle->Fill((*i_genElectron)->pt());
+    h_trueEta_genParticle->Fill((*i_genElectron)->eta());
   }
 
 
@@ -210,22 +210,22 @@ void ElectronAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 
   int histoID = 0;
   for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
-    h_Pt_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TruePt", "Pt vs TruePt for " + *i_shortName + "ID", 50,0.,500., 50,0.,500.);
-    h_Pt_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Pt_TrueEta", "Pt vs TrueEta for " + *i_shortName + "ID", 50,0.,500., 50,-5.,5.);
-    h_Eta_TruePt[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TruePt", "Eta vs TruePt for " + *i_shortName + "ID", 50,-5.,5., 50,0.,500.);
-    h_Eta_TrueEta[histoID] = ibooker_.book2D(*i_shortName + "ID_Eta_TrueEta", "Eta vs TrueEta for " + *i_shortName + "ID", 50,-5.,5., 50,-5.,5.);
+    h_truePt_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
+    h_truePt_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
+    h_trueEta_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
+    h_trueEta_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
     ++histoID;
   }
 
   ibooker_.setCurrentFolder("Electron/Helpers");
   
-  h_Pt_genParticle = ibooker_.book1D("Pt_genElectron","pt vs total# genElectrons",50,0.,500.);
-  h_Eta_genParticle = ibooker_.book1D("Eta_genElectron","eta vs total# genElectrons",50,-5.,5.);
+  h_truePt_genParticle = ibooker_.book1D("truePt_genElectron","true pt vs total# genElectrons",50,0.,500.);
+  h_trueEta_genParticle = ibooker_.book1D("trueEta_genElectron","true eta vs total# genElectrons",50,-5.,5.);
 
   histoID = 0;
   for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
-    h_Pt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Pt_recoElectron","pt vs total# recoElectrons for " + *i_shortName + "ID/Iso",50,0.,500.);
-    h_Eta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_Eta_recoElectron","# eta vs total# recoElectrons for " + *i_shortName + "ID/Iso",50,-5.,5.);
+    h_truePt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_truePt_recoElectron","true pt vs total# recoElectrons for " + *i_shortName + " id",50,0.,500.);
+    h_trueEta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_trueEta_recoElectron","true eta vs total# recoElectrons for " + *i_shortName + " id",50,-5.,5.);
     ++histoID;
   }
   
@@ -248,13 +248,13 @@ void ElectronAnalyzer_MiniAOD::fillHisto(int histoID, std::vector<const reco::Ca
     }
     if(!matchedGenParticle) continue;
   
-    h_Pt_recoParticle[histoID]->Fill(matchedGenParticle->pt());
-    h_Eta_recoParticle[histoID]->Fill(matchedGenParticle->eta());
+    h_truePt_recoParticle[histoID]->Fill(matchedGenParticle->pt());
+    h_trueEta_recoParticle[histoID]->Fill(matchedGenParticle->eta());
 
-    h_Pt_TruePt[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->pt());
-    h_Pt_TrueEta[histoID]->Fill((*i_recoParticle)->pt(), matchedGenParticle->eta());
-    h_Eta_TruePt[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->pt());
-    h_Eta_TrueEta[histoID]->Fill((*i_recoParticle)->eta(), matchedGenParticle->eta());
+    h_truePt_pt[histoID]->Fill(matchedGenParticle->pt(), (*i_recoParticle)->pt()); 
+    h_truePt_eta[histoID]->Fill(matchedGenParticle->pt(), (*i_recoParticle)->eta());
+    h_trueEta_pt[histoID]->Fill(matchedGenParticle->eta(), (*i_recoParticle)->pt());
+    h_trueEta_eta[histoID]->Fill(matchedGenParticle->eta(), (*i_recoParticle)->eta());
   }
 
 }

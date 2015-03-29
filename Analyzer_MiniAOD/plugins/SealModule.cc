@@ -15,3 +15,5 @@ DEFINE_FWK_MODULE(ElectronAnalyzer_MiniAOD);
 #include <FastSimValidation/Analyzer_MiniAOD/interface/PhotonAnalyzer_MiniAOD.h>
 DEFINE_FWK_MODULE(PhotonAnalyzer_MiniAOD);
 
+#include <FastSimValidation/Analyzer_MiniAOD/interface/TauAnalyzer_MiniAOD.h>
+DEFINE_FWK_MODULE(TauAnalyzer_MiniAOD);
