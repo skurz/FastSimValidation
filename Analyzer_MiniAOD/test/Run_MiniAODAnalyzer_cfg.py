@@ -11,4 +11,4 @@ from FastSimValidation.Analyzer_MiniAOD.MiniAODAnalyzer_cfg import MiniAODAnalyz
 MiniAODAnalyzer(process,
                 testfileName='root://xrootd-cms.infn.it//store/relval/CMSSW_7_4_0_pre1/RelValTTbar_13/MINIAODSIM/PU50ns_MCRUN2_73_V4-v1/00000/AA55FDCF-727A-E411-AFCA-002618943983.root',
                 isFullSim=True,
-                numProcessedEvt=200)
+                numProcessedEvt=1000)
