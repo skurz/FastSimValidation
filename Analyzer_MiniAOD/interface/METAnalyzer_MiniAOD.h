@@ -78,51 +78,47 @@ private:
   edm::EDGetTokenT<pat::METCollection> theMETCollection_;
   edm::EDGetTokenT<reco::VertexCollection> thePVCollection_;
 
-  // cuts:
-  double ptThrJet_;
-
-  // config
-  bool fullSim_;
+  std::string theCollectionName_;
 
   // debug
   bool debug_;
 
 
   // Histograms
-  MonitorElement* h_HTvsmetPt;
-  MonitorElement* h_NvertexvsmetPt;
-  MonitorElement* h_ThrustvsmetPt;
-  MonitorElement* h_SumETvsmetPt;
-  MonitorElement* h_NJetsvsmetPt;
-  MonitorElement* h_genMETvsmetPt;
+  MonitorElement* h_HT_metPt;
+  MonitorElement* h_Nvertex_metPt;
+  MonitorElement* h_Thrust_metPt;
+  MonitorElement* h_SumET_metPt;
+  MonitorElement* h_NJets_metPt;
+  MonitorElement* h_genMET_metPt;
 
-  MonitorElement* h_HTvsmetPx;
-  MonitorElement* h_NvertexvsmetPx;
-  MonitorElement* h_ThrustvsmetPx;
-  MonitorElement* h_SumETvsmetPx;
-  MonitorElement* h_NJetsvsmetPx;
-  MonitorElement* h_genMETvsmetPx;
+  MonitorElement* h_HT_metPx;
+  MonitorElement* h_Nvertex_metPx;
+  MonitorElement* h_Thrust_metPx;
+  MonitorElement* h_SumET_metPx;
+  MonitorElement* h_NJets_metPx;
+  MonitorElement* h_genMET_metPx;
 
-  MonitorElement* h_HTvsmetPy;
-  MonitorElement* h_NvertexvsmetPy;
-  MonitorElement* h_ThrustvsmetPy;
-  MonitorElement* h_SumETvsmetPy;
-  MonitorElement* h_NJetsvsmetPy;
-  MonitorElement* h_genMETvsmetPy;
+  MonitorElement* h_HT_metPy;
+  MonitorElement* h_Nvertex_metPy;
+  MonitorElement* h_Thrust_metPy;
+  MonitorElement* h_SumET_metPy;
+  MonitorElement* h_NJets_metPy;
+  MonitorElement* h_genMET_metPy;
 
-  MonitorElement* h_HTvsmetProj;
-  MonitorElement* h_NvertexvsmetProj;
-  MonitorElement* h_ThrustvsmetProj;
-  MonitorElement* h_SumETvsmetProj;
-  MonitorElement* h_NJetsvsmetProj;
-  MonitorElement* h_genMETvsmetProj;
+  MonitorElement* h_HT_metProj;
+  MonitorElement* h_Nvertex_metProj;
+  MonitorElement* h_Thrust_metProj;
+  MonitorElement* h_SumET_metProj;
+  MonitorElement* h_NJets_metProj;
+  MonitorElement* h_genMET_metProj;
 
-  MonitorElement* h_HTvsmetProjOrth;
-  MonitorElement* h_NvertexvsmetProjOrth;
-  MonitorElement* h_ThrustvsmetProjOrth;
-  MonitorElement* h_SumETvsmetProjOrth;
-  MonitorElement* h_NJetsvsmetProjOrth;
-  MonitorElement* h_genMETvsmetProjOrth;
+  MonitorElement* h_HT_metProjOrth;
+  MonitorElement* h_Nvertex_metProjOrth;
+  MonitorElement* h_Thrust_metProjOrth;
+  MonitorElement* h_SumET_metProjOrth;
+  MonitorElement* h_NJets_metProjOrth;
+  MonitorElement* h_genMET_metProjOrth;
 
 };
 

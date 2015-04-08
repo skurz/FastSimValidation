@@ -13,8 +13,9 @@ METAnalyzer_MiniAOD = cms.EDAnalyzer("METAnalyzer_MiniAOD",
     #TriggerObject            = cms.InputTag('TriggerObjectStandAlone','','PAT'),
     #TriggerPath              = cms.InputTag('','',''),
 
-    #Cuts
 
+    CollectionName = cms.string("MET"),
+    
 
     #Debug
     Debug                 = cms.untracked.bool(False),

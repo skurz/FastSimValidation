@@ -30,8 +30,11 @@ ElectronAnalyzer_MiniAOD::ElectronAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   theGenElectronCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenElectronCollection"));
   theElectronIDs_ = ps.getParameter<std::vector<edm::ParameterSet>>("ElectronIDs");
 
+  theCollectionName_ = ps.getParameter<std::string>("CollectionName");
+
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
+  
 
  
 }
@@ -121,7 +124,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
   }
 
   // ElectronIDs
-  std::vector<std::pair<TString, double>> idPairs;
+  std::vector<std::pair<std::string, double>> idPairs;
   for (std::vector<edm::ParameterSet>::const_iterator it = theElectronIDs_.begin(); it != theElectronIDs_.end(); ++it) {
     idPairs.push_back(std::make_pair(it->getParameter<std::string>("idString"), it->getParameter<double>("cutValue")));
   }
@@ -133,7 +136,7 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
   // Create subset for every ID
   std::vector<std::vector<const pat::Electron*>> idElectrons;
 
-  for(std::vector<std::pair<TString, double>>::const_iterator i_elID = idPairs.begin(); i_elID != idPairs.end(); ++i_elID){
+  for(std::vector<std::pair<std::string, double>>::const_iterator i_elID = idPairs.begin(); i_elID != idPairs.end(); ++i_elID){
 
     std::vector<const pat::Electron*> passedEls;
     for (std::vector<const pat::Electron *>::const_iterator i_patElectron = patElectrons.begin(); i_patElectron != patElectrons.end(); ++i_patElectron){
@@ -200,34 +203,31 @@ void ElectronAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const
 //
 void ElectronAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
-  std::vector<TString> tagNamesShort;
+  std::vector<std::string> tagNamesShort;
   for (std::vector<edm::ParameterSet>::const_iterator it = theElectronIDs_.begin(); it != theElectronIDs_.end(); ++it) {
     tagNamesShort.push_back(it->getParameter<std::string>("idShortName"));
   }
 
   ibooker_.cd();
-  ibooker_.setCurrentFolder("Electron");
 
   int histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+  for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    ibooker_.setCurrentFolder(theCollectionName_+"/"+(*i_shortName)+"ID");
+
     h_truePt_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
     h_truePt_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
     h_trueEta_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
     h_trueEta_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
-    ++histoID;
-  }
 
-  ibooker_.setCurrentFolder("Electron/Helpers");
-  
-  h_truePt_genParticle = ibooker_.book1D("truePt_genElectron","true pt vs total# genElectrons",50,0.,500.);
-  h_trueEta_genParticle = ibooker_.book1D("trueEta_genElectron","true eta vs total# genElectrons",50,-5.,5.);
-
-  histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
     h_truePt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_truePt_recoElectron","true pt vs total# recoElectrons for " + *i_shortName + " id",50,0.,500.);
     h_trueEta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_trueEta_recoElectron","true eta vs total# recoElectrons for " + *i_shortName + " id",50,-5.,5.);
     ++histoID;
   }
+  
+  ibooker_.setCurrentFolder(theCollectionName_);
+
+  h_truePt_genParticle = ibooker_.book1D("truePt_genElectron","true pt vs total# genElectrons",50,0.,500.);
+  h_trueEta_genParticle = ibooker_.book1D("trueEta_genElectron","true eta vs total# genElectrons",50,-5.,5.);
   
   ibooker_.cd();  
 }

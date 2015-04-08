@@ -74,6 +74,8 @@ private:
   edm::EDGetTokenT<reco::CandidateCollection> theRecoJetCollection_;
   edm::EDGetTokenT<reco::CandidateCollection> theGenJetCollection_;
 
+  std::string theCollectionName_;
+  
   // config
   bool fullSim_;
 

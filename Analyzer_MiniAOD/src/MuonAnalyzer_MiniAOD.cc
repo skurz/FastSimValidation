@@ -30,6 +30,8 @@ MuonAnalyzer_MiniAOD::MuonAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   theGenPhotonCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenMuonCollection"));
   thePVCollection_           = consumes<reco::VertexCollection>(ps.getParameter<edm::InputTag>("PVCollection"));
 
+  theCollectionName_ = ps.getParameter<std::string>("CollectionName");
+
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -197,31 +199,28 @@ void MuonAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& eS
 //
 void MuonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
-  std::vector<TString> tagNamesShort;
+  std::vector<std::string> tagNamesShort;
   tagNamesShort.push_back("loose");
   tagNamesShort.push_back("tight");
 
   ibooker_.cd();
-  ibooker_.setCurrentFolder("Muon");
+  ibooker_.setCurrentFolder(theCollectionName_);
+
+  h_truePt_genParticle = ibooker_.book1D("truePt_genMuon","true pt vs total# genMuons",50,0.,500.);
+  h_trueEta_genParticle = ibooker_.book1D("trueEta_genMuon","true eta vs total# genMuons",50,-5.,5.);
 
   int histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+  for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"IDIso");
+
     h_truePt_pt[histoID] = ibooker_.book2D(*i_shortName + "IDIso_truePt_pt", "true pt vs pt for " + *i_shortName + " id/iso", 50,0.,500., 50,0.,500.);
     h_truePt_eta[histoID] = ibooker_.book2D(*i_shortName + "IDIso_truePt_eta", "true pt vs eta for " + *i_shortName + " id/iso", 50,0.,500., 50,-5.,5.);
     h_trueEta_pt[histoID] = ibooker_.book2D(*i_shortName + "IDIso_trueEta_pt", "true eta vs pt for " + *i_shortName + " id/iso", 50,-5.,5., 50,0.,500.);
     h_trueEta_eta[histoID] = ibooker_.book2D(*i_shortName + "IDIso_trueEta_eta", "true eta vs eta for " + *i_shortName + " id/iso", 50,-5.,5., 50,-5.,5.);
-    ++histoID;
-  }
 
-  ibooker_.setCurrentFolder("Muon/Helpers");
-  
-  h_truePt_genParticle = ibooker_.book1D("truePt_genMuon","true pt vs total# genMuons",50,0.,500.);
-  h_trueEta_genParticle = ibooker_.book1D("trueEta_genMuon","true eta vs total# genMuons",50,-5.,5.);
-
-  histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
     h_truePt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "IDIso_truePt_recoMuon","true pt vs total# recoMuons for " + *i_shortName + " id/iso",50,0.,500.);
     h_trueEta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "IDIso_trueEta_recoMuon","true eta vs total# recoMuons for " + *i_shortName + " id/iso",50,-5.,5.);
+    
     ++histoID;
   }
   

@@ -79,6 +79,8 @@ private:
   edm::EDGetTokenT<reco::CandidateCollection> theGenPhotonCollection_;
   edm::EDGetTokenT<reco::VertexCollection> thePVCollection_;
 
+  std::string theCollectionName_;
+
   // cuts:
 
   // config

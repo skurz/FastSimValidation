@@ -1,5 +1,5 @@
-#ifndef TauAnalyzer_MiniAOD_H
-#define TauAnalyzer_MiniAOD_H
+#ifndef bJetsAnalyzer_MiniAOD_H
+#define bJetsAnalyzer_MiniAOD_H
 
 //Framework
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
@@ -25,9 +25,6 @@
 // Muon
 #include "DataFormats/PatCandidates/interface/Muon.h"
 
-// Tau
-#include "DataFormats/PatCandidates/interface/Tau.h"
-
 // PFMET
 #include "DataFormats/METReco/interface/MET.h"
 #include "DataFormats/PatCandidates/interface/MET.h"
@@ -40,22 +37,22 @@
 // Jets
 #include "DataFormats/PatCandidates/interface/Jet.h"
 
-//GenLevel
-#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
-
 // Trigger
 #include "DataFormats/Common/interface/TriggerResults.h"
 #include "DataFormats/HLTReco/interface/TriggerObject.h"
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "FWCore/Common/interface/TriggerNames.h"
 
+// PtrVector
+#include "DataFormats/Common/interface/Ptr.h"
+#include "DataFormats/Common/interface/PtrVector.h"
  
-class TauAnalyzer_MiniAOD: public DQMEDAnalyzer{
+class bJetsAnalyzer_MiniAOD: public DQMEDAnalyzer{
 
 public:
 
-  TauAnalyzer_MiniAOD(const edm::ParameterSet& ps);
-  virtual ~TauAnalyzer_MiniAOD();
+  bJetsAnalyzer_MiniAOD(const edm::ParameterSet& ps);
+  virtual ~bJetsAnalyzer_MiniAOD();
   
 protected:
 
@@ -72,27 +69,22 @@ private:
   void fillHisto(std::string matchedParticle, int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection);
 
   //other functions
-  void fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Tau*>* recoCollection, std::vector<const pat::PackedGenParticle*>* genCollection);
-  void fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Tau*>* recoCollection, std::vector<const reco::GenJet*>* genCollection);
-  void fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Tau*>* recoCollection, std::vector<const reco::GenParticle*>* genCollection);
+  void fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Jet*>* recoCollection, std::vector<const reco::GenJet*>* genCollection);
 
+  //other functions
 
-  //private variables
 
   //variables from config file
-  edm::EDGetTokenT<reco::CandidateCollection> theTauCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenTauCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenMuonCollection_;
-  edm::EDGetTokenT<reco::CandidateCollection> theGenElectronCollection_;
+  edm::EDGetTokenT<reco::CandidateCollection> theRecoJetCollection_;
   edm::EDGetTokenT<reco::CandidateCollection> theGenJetCollection_;
+  edm::EDGetTokenT<reco::GenParticleCollection> thePrunedGenParticleCollection_;
 
-  std::vector<edm::ParameterSet> theTauIDs_;
+  std::vector<edm::ParameterSet> theBjetIDs_;
 
   std::string theCollectionName_;
+
+  double coneSize_;
   
-
-  // cuts:
-
   // config
   bool fullSim_;
 
@@ -101,17 +93,12 @@ private:
 
 
   // Histograms
-  MonitorElement* h_truePt_pt[4][20];
-  MonitorElement* h_truePt_eta[4][20];
-  MonitorElement* h_trueEta_pt[4][20];
-  MonitorElement* h_trueEta_eta[4][20];
+  MonitorElement* h_truePt_recoParticle[3][20];
+  MonitorElement* h_trueEta_recoParticle[3][20];
 
-  MonitorElement* h_truePt_recoParticle[4][20];
-  MonitorElement* h_trueEta_recoParticle[4][20];
+  MonitorElement* h_truePt_genParticle[3];
+  MonitorElement* h_trueEta_genParticle[3];
 
-  MonitorElement* h_truePt_genParticle[4];
-  MonitorElement* h_trueEta_genParticle[4];
-  
 };
 
 

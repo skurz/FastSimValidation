@@ -78,6 +78,7 @@ private:
   edm::EDGetTokenT<reco::CandidateCollection> theElectronCollection_;
   edm::EDGetTokenT<reco::CandidateCollection> theGenElectronCollection_;
   std::vector<edm::ParameterSet> theElectronIDs_;
+  std::string theCollectionName_;
 
   // cuts:
 

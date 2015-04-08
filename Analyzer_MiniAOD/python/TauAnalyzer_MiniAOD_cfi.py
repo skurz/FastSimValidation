@@ -32,6 +32,8 @@ TauAnalyzer_MiniAOD = cms.EDAnalyzer("TauAnalyzer_MiniAOD",
     		)
     	),
 
+    CollectionName = cms.string("Taus"),
+    
     #Debug
     Debug                    = cms.untracked.bool(False),
 

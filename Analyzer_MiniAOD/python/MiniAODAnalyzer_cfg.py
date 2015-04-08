@@ -20,6 +20,7 @@ def MiniAODAnalyzer(process,
 
     # my analyzers
     process.load('FastSimValidation.Analyzer_MiniAOD.JetsAnalyzer_MiniAOD_cfi')
+    process.load('FastSimValidation.Analyzer_MiniAOD.bJetsAnalyzer_MiniAOD_cfi')
     process.load('FastSimValidation.Analyzer_MiniAOD.METAnalyzer_MiniAOD_cfi')
     process.load('FastSimValidation.Analyzer_MiniAOD.MuonAnalyzer_MiniAOD_cfi')
     process.load('FastSimValidation.Analyzer_MiniAOD.ElectronAnalyzer_MiniAOD_cfi')
@@ -31,6 +32,9 @@ def MiniAODAnalyzer(process,
         input = cms.untracked.int32(numProcessedEvt)
     )
 
+    process.options = cms.untracked.PSet(
+        SkipEvent = cms.untracked.vstring('ProductNotFound')
+    )
 
     # Input source
     process.source = cms.Source("PoolSource",
@@ -70,8 +74,9 @@ def MiniAODAnalyzer(process,
                                         process.MuonAnalyzer_MiniAOD *
                                         process.ElectronAnalyzer_MiniAOD *
                                         process.PhotonAnalyzer_MiniAOD *
-                                        process.TauAnalyzer_MiniAOD
-                                        #process.METAnalyzer_MiniAOD 
+                                        #process.TauAnalyzer_MiniAOD *
+                                        process.bJetsAnalyzer_MiniAOD *
+                                        process.METAnalyzer_MiniAOD 
         )
     process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 

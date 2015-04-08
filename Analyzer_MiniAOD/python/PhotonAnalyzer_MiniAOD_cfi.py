@@ -17,6 +17,8 @@ PhotonAnalyzer_MiniAOD = cms.EDAnalyzer("PhotonAnalyzer_MiniAOD",
     		),
     	),
 
+    CollectionName = cms.string("Photons"),
+    
     #Debug
     Debug                     = cms.untracked.bool(False),
 

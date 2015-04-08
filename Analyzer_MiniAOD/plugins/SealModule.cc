@@ -3,6 +3,9 @@
 #include <FastSimValidation/Analyzer_MiniAOD/interface/JetsAnalyzer_MiniAOD.h>
 DEFINE_FWK_MODULE(JetsAnalyzer_MiniAOD);
 
+#include <FastSimValidation/Analyzer_MiniAOD/interface/bJetsAnalyzer_MiniAOD.h>
+DEFINE_FWK_MODULE(bJetsAnalyzer_MiniAOD);
+
 #include <FastSimValidation/Analyzer_MiniAOD/interface/METAnalyzer_MiniAOD.h>
 DEFINE_FWK_MODULE(METAnalyzer_MiniAOD);
 

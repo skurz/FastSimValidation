@@ -28,10 +28,8 @@ JetsAnalyzer_MiniAOD::JetsAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   // Get parameters from configuration file
   theRecoJetCollection_    = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("recoJetCollection"));
   theGenJetCollection_     = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("genJetCollection"));
-  
-  //triggerResults_          = consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("TriggerResults"));
-  //triggerObject_           = consumes<pat::TriggerObjectStandAlone>(ps.getParameter<edm::InputTag>("TriggerObject"));
-  //triggerPath_             = ps.getParameter<std::string>("TriggerPath");
+
+  theCollectionName_ = ps.getParameter<std::string>("CollectionName");
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -210,9 +208,14 @@ void JetsAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& eS
 void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
   ibooker_.cd();
-  ibooker_.setCurrentFolder("Jets");
-  
-  // TH2
+
+  ibooker_.setCurrentFolder(theCollectionName_);
+
+  h_truePt_genJet = ibooker_.book1D("truePt_genJet","true pt vs total# genJets",50,0.,500.);
+  h_trueEta_genJet = ibooker_.book1D("trueEta_genJet","true eta vs total# genJets",50,-5.,5.);
+
+
+  ibooker_.setCurrentFolder(theCollectionName_+"/"+"LooseID");
 
   h_truePt_jetRelPtDiff = ibooker_.book2D("truePt_jetRelPtDiff","true pt vs (reco pt - true pt) / (true pt)",50,0.,500.,20,-1.,1.);
   h_trueEta_jetRelPtDiff = ibooker_.book2D("trueEta_jetRelPtDiff","true eta vs (reco pt - true pt) / (true pt)",50,-5.,5.,20,-1.,1.);
@@ -223,14 +226,9 @@ void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   h_truePt_jetPhiDiff = ibooker_.book2D("truePt_jetPhiDiff","true pt vs (reco phi - true phi)",50,0.,500.,20,-0.5,0.5);
   h_trueEta_jetPhiDiff = ibooker_.book2D("trueEta_jetPhiDiff","true eta vs (reco phi - true phi)",50,-5.,5.,20,-0.5,0.5);
 
-
-  ibooker_.setCurrentFolder("Jets/Helpers");
-
-  h_truePt_genJet = ibooker_.book1D("truePt_genJet","true pt vs total# genJets",50,0.,500.);
-  h_trueEta_genJet = ibooker_.book1D("trueEta_genJet","true eta vs total# genJets",50,-5.,5.);
-
   h_truePt_recoJet = ibooker_.book1D("truePt_recoJet","true pt vs total# recoJets",50,0.,500.);
   h_trueEta_recoJet = ibooker_.book1D("trueEta_recoJet","true eta vs total# genJets",50,-5.,5.);
+
 
   ibooker_.cd();  
 

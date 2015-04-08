@@ -22,6 +22,13 @@ selectedGenJets = cms.EDFilter("CandViewSelector",
     filter = cms.bool(False)
     )
 
+# Create subset of prunedGenParticles for bJet identification
+selectedPrunedGenParticles = cms.EDFilter("CandViewSelector",
+    src = cms.InputTag("prunedGenParticles"),
+    cut = cms.string("abs(eta)<2.5 && pt>30."),
+    filter = cms.bool(False)
+    )
+
 produceJets = cms.Sequence(
     preSelectedRecoJets *
     selectedRecoJets *
@@ -120,14 +127,14 @@ selectedTaus = cms.EDFilter("CandViewSelector",
     )
 
 genTaus = cms.EDFilter("PdgIdAndStatusCandViewSelector",
-    src = cms.InputTag("packedGenParticles"), 
+    src = cms.InputTag("prunedGenParticles"), 
     pdgId = cms.vint32(-15, 15),
-    status = cms.vint32(1),
+    status = cms.vint32(3),
     filter = cms.bool(False)
     )
 
 selectedGenTaus = cms.EDFilter("CandViewSelector",
-    src = cms.InputTag("genPhotons"),
+    src = cms.InputTag("genTaus"),
     cut = cms.string("abs(eta)<2.5 && pt>20."), 
     filter = cms.bool(False)
     )

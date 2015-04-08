@@ -34,6 +34,8 @@ TauAnalyzer_MiniAOD::TauAnalyzer_MiniAOD(const edm::ParameterSet& ps)
 
   theTauIDs_ = ps.getParameter<std::vector<edm::ParameterSet>>("TauIDs");
 
+  theCollectionName_ = ps.getParameter<std::string>("CollectionName");
+
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -115,16 +117,16 @@ void TauAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& eS
     return;
   }
 
-  std::vector<const pat::PackedGenParticle*> genTaus;
+  std::vector<const reco::GenParticle*> genTaus;
   for (reco::CandidateCollection::const_iterator i_genTau = genTauCollection->begin(); i_genTau != genTauCollection->end(); ++i_genTau)
   {
     try{
-      genTaus.push_back(dynamic_cast<const pat::PackedGenParticle*>(&(*i_genTau)));
+      genTaus.push_back(dynamic_cast<const reco::GenParticle*>(&(*i_genTau)));
     }catch(std::bad_cast &e){
-      std::cout << e.what() << ": collection genTaus not of type pat::PackedGenParticle" << std::endl;
+      std::cout << e.what() << ": collection genTaus not of type reco::GenParticle" << std::endl;
     }
   }
-
+  
   // GenElectrons
   edm::Handle<reco::CandidateCollection> genElectronCollection;
   e.getByToken(theGenElectronCollection_, genElectronCollection);
@@ -183,12 +185,12 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
   }
 
   // TauIDs
-  std::vector<std::vector<std::pair<TString, double>>> idPairs;
+  std::vector<std::vector<std::pair<std::string, double>>> idPairs;
   for (std::vector<edm::ParameterSet>::const_iterator it = theTauIDs_.begin(); it != theTauIDs_.end(); ++it) {
     std::vector<std::string> idStrings = it->getParameter<std::vector<std::string>>("idStrings");
     std::vector<double> cutValues = it->getParameter<std::vector<double>>("cutValues");
 
-    std::vector<std::pair<TString, double>> i_idPair;
+    std::vector<std::pair<std::string, double>> i_idPair;
     std::vector<std::string>::const_iterator i_string; std::vector<double>::const_iterator i_double;
     for (i_string = idStrings.begin(), i_double = cutValues.begin(); (i_string != idStrings.end()) && (i_double != cutValues.end()); ++i_string, ++i_double) {
       i_idPair.push_back(std::make_pair(*i_string, *i_double));
@@ -204,12 +206,12 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
     // Create subset for every ID
   std::vector<std::vector<const pat::Tau*>> idTaus;
 
-  for(std::vector<std::vector<std::pair<TString, double>>>::const_iterator i_tauIDvec = idPairs.begin(); i_tauIDvec != idPairs.end(); ++i_tauIDvec){
+  for(std::vector<std::vector<std::pair<std::string, double>>>::const_iterator i_tauIDvec = idPairs.begin(); i_tauIDvec != idPairs.end(); ++i_tauIDvec){
 
     std::vector<const pat::Tau*> passedTaus;
     bool passedAll = true;
     for (std::vector<const pat::Tau *>::const_iterator i_patTau = patTaus.begin(); i_patTau != patTaus.end(); ++i_patTau){
-      for (std::vector<std::pair<TString, double>>::const_iterator i_tauID = i_tauIDvec->begin(); i_tauID != i_tauIDvec->end(); ++i_tauID){
+      for (std::vector<std::pair<std::string, double>>::const_iterator i_tauID = i_tauIDvec->begin(); i_tauID != i_tauIDvec->end(); ++i_tauID){
         if((*i_patTau)->tauID(i_tauID->first) < i_tauID->second) passedAll = false;
       }
      
@@ -232,37 +234,43 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
   // Fill Histrograms
   //-------------------------------
 
-  std::string matchedParticleNames[4] = {"matchedTau", "matchedEl", "matchedMu", "matchedJet"};
+  //std::string matchedParticleNames[4] = {"matchedTau", "matchedEl", "matchedMu", "matchedJet"};
 
-  for(int i_particle = 0; i_particle < 4; ++i_particle){
-    std::vector<const pat::PackedGenParticle*>* genCollection;
-    if(i_particle == 0) genCollection = &genTaus;
-    if(i_particle == 1) genCollection = &genElectrons;
-    if(i_particle == 2) genCollection = &genMuons;
+  int histID = 0;
+  for(std::vector<std::vector<const pat::Tau*>>::iterator i_idTaus = idTaus.begin(); i_idTaus != idTaus.end(); ++i_idTaus){
+    fillHisto("matchedTau", histID, &(*i_idTaus), &genTaus);
+    fillHisto("matchedEl", histID, &(*i_idTaus), &genElectrons);
+    fillHisto("matchedMu", histID, &(*i_idTaus), &genMuons);
+    fillHisto("matchedJet", histID, &(*i_idTaus), &genJets);
 
-    int histID = 0;
-    if(i_particle < 3)
-      for(std::vector<std::vector<const pat::Tau*>>::iterator i_idTaus = idTaus.begin(); i_idTaus != idTaus.end(); ++i_idTaus){
-        fillHisto(matchedParticleNames[i_particle], histID, &(*i_idTaus), genCollection);
-        //std::cout << (&(*it))->size() << std::endl;
-        ++histID;
-      }
-    else
-      for(std::vector<std::vector<const pat::Tau*>>::iterator i_idTaus = idTaus.begin(); i_idTaus != idTaus.end(); ++i_idTaus){
-        fillHisto(matchedParticleNames[i_particle], histID, &(*i_idTaus), &genJets);
-        //std::cout << (&(*it))->size() << std::endl;
-        ++histID;
-      }
+    ++histID;
   }
 
 
   // Gen
-  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau) 
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau) 
   {
-    h_truePt_genParticle->Fill((*i_genTau)->pt());
-    h_trueEta_genParticle->Fill((*i_genTau)->eta());
+    h_truePt_genParticle[0]->Fill((*i_genTau)->pt());
+    h_trueEta_genParticle[0]->Fill((*i_genTau)->eta());
   }
 
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genEl = genElectrons.begin(); i_genEl != genElectrons.end(); ++i_genEl) 
+  {
+    h_truePt_genParticle[1]->Fill((*i_genEl)->pt());
+    h_trueEta_genParticle[1]->Fill((*i_genEl)->eta());
+  }
+
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMu = genMuons.begin(); i_genMu != genMuons.end(); ++i_genMu) 
+  {
+    h_truePt_genParticle[2]->Fill((*i_genMu)->pt());
+    h_trueEta_genParticle[2]->Fill((*i_genMu)->eta());
+  }
+
+  for (std::vector<const reco::GenJet*>::const_iterator i_genJets = genJets.begin(); i_genJets != genJets.end(); ++i_genJets) 
+  {
+    h_truePt_genParticle[3]->Fill((*i_genJets)->pt());
+    h_trueEta_genParticle[3]->Fill((*i_genJets)->eta());
+  }
 
 }
 //
@@ -288,7 +296,7 @@ void TauAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& eSe
 //
 void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
-  std::vector<TString> tagNamesShort;
+  std::vector<std::string> tagNamesShort;
   for (std::vector<edm::ParameterSet>::const_iterator it = theTauIDs_.begin(); it != theTauIDs_.end(); ++it) {
     tagNamesShort.push_back(it->getParameter<std::string>("idShortName"));
   }
@@ -296,29 +304,27 @@ void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   std::string matchedParticleNames[4] = {"matchedTau", "matchedEl", "matchedMu", "matchedJet"};
 
   ibooker_.cd();
-  ibooker_.setCurrentFolder("Tau");
+
+  for(int i_particle = 0; i_particle < 4; ++i_particle){
+    ibooker_.setCurrentFolder(theCollectionName_+"/"+matchedParticleNames[i_particle]);
+    
+    h_truePt_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "truePt_genTau","true pt vs total# genParticles",50,0.,500.);
+    h_trueEta_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "trueEta_genTau","true eta vs total# genParticles",50,-5.,5.);
+  }
 
   for(int i_particle = 0; i_particle < 4; ++i_particle){
     int histoID = 0;
-    for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+      ibooker_.setCurrentFolder(theCollectionName_+"/"+matchedParticleNames[i_particle]+"/"+*i_shortName);
+
       h_truePt_pt[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
       h_truePt_eta[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
       h_trueEta_pt[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
       h_trueEta_eta[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
-      ++histoID;
-    }
-  }
-
-  ibooker_.setCurrentFolder("Tau/Helpers");
-  
-  h_truePt_genParticle = ibooker_.book1D("truePt_genTau","true pt vs total# genTaus",50,0.,500.);
-  h_trueEta_genParticle = ibooker_.book1D("trueEta_genTau","true eta vs total# genTaus",50,-5.,5.);
-
-  for(int i_particle = 0; i_particle < 4; ++i_particle){
-    int histoID = 0;
-    for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+      
       h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_recoTau","true pt vs total# recoTaus for " + *i_shortName + " id",50,0.,500.);
       h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_recoTau","true eta vs total# recoTaus for " + *i_shortName + " id",50,-5.,5.);
+      
       ++histoID;
     }
   }
@@ -338,7 +344,6 @@ void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, st
   else if(matchedParticle.compare("matchedMu") == 0) particleNr = 2;
   else if(matchedParticle.compare("matchedJet") == 0) particleNr = 3;
   else{std::cout << "TauAnalyzer_MiniAOD: String for histogram filling has to be element of {matchedTau, matchedEl, matchedMu, matchedJet}." << std::endl; return;}
-
 
    for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
   {
@@ -371,5 +376,9 @@ void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, st
 }
 
 void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Tau*>* recoCollection, std::vector<const reco::GenJet*>* genCollection){
+  fillHisto(matchedParticle, histoID, (std::vector<const reco::Candidate*>*) recoCollection, (std::vector<const reco::Candidate*>*) genCollection);
+}
+
+void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, std::vector<const pat::Tau*>* recoCollection, std::vector<const reco::GenParticle*>* genCollection){
   fillHisto(matchedParticle, histoID, (std::vector<const reco::Candidate*>*) recoCollection, (std::vector<const reco::Candidate*>*) genCollection);
 }

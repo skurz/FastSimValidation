@@ -29,7 +29,9 @@ PhotonAnalyzer_MiniAOD::PhotonAnalyzer_MiniAOD(const edm::ParameterSet& ps)
   thePhotonCollection_         = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("PhotonCollection"));
   theGenPhotonCollection_  = consumes<reco::CandidateCollection>(ps.getParameter<edm::InputTag>("GenPhotonCollection"));
   thePhotonIDs_ = ps.getParameter<std::vector<edm::ParameterSet>>("PhotonIDs");
-  
+
+  theCollectionName_ = ps.getParameter<std::string>("CollectionName");
+
 
   // debug
   debug_ = ps.getUntrackedParameter<bool>("Debug");
@@ -209,35 +211,36 @@ void PhotonAnalyzer_MiniAOD::endRun(edm::Run const& run, edm::EventSetup const& 
 //
 void PhotonAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
-  std::vector<TString> tagNamesShort;
+  std::vector<std::string> tagNamesShort;
   for (std::vector<edm::ParameterSet>::const_iterator it = thePhotonIDs_.begin(); it != thePhotonIDs_.end(); ++it) {
     tagNamesShort.push_back(it->getParameter<std::string>("idShortName"));
   }
 
   ibooker_.cd();
-  ibooker_.setCurrentFolder("Photon");
 
-  int histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
-    h_truePt_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_pt", "truePt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
-    h_truePt_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_eta", "truePt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
-    h_trueEta_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_pt", "trueEta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
-    h_trueEta_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_eta", "trueEta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
-    ++histoID;
-  }
-
-  ibooker_.setCurrentFolder("Photon/Helpers");
+  ibooker_.setCurrentFolder(theCollectionName_);
   
   h_truePt_genParticle = ibooker_.book1D("truePt_genPhoton","true pt vs total# genPhotons",50,0.,500.);
   h_trueEta_genParticle = ibooker_.book1D("trueEta_genPhoton","true eta vs total# genPhotons",50,-5.,5.);
 
-  histoID = 0;
-  for(std::vector<TString>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+
+  int histoID = 0;
+  for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
+    ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"ID");
+
+
+    h_truePt_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_pt", "truePt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
+    h_truePt_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_truePt_eta", "truePt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
+    h_trueEta_pt[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_pt", "trueEta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
+    h_trueEta_eta[histoID] = ibooker_.book2D(*i_shortName + "ID_trueEta_eta", "trueEta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
+
     h_truePt_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_truePt_recoPhoton","true pt vs total# recoPhotons for " + *i_shortName + " id",50,0.,500.);
     h_trueEta_recoParticle[histoID] = ibooker_.book1D(*i_shortName + "ID_trueEta_recoPhoton","true eta vs total# recoPhotons for " + *i_shortName + " id",50,-5.,5.);
+
     ++histoID;
   }
-  
+
+
   ibooker_.cd();  
 
 }

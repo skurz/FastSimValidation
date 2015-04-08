@@ -29,6 +29,7 @@ ElectronAnalyzer_MiniAOD = cms.EDAnalyzer("ElectronAnalyzer_MiniAOD",
     		)
     	),
 
+    CollectionName = cms.string("Electrons"),
 
     #Debug
     Debug                     = cms.untracked.bool(False)

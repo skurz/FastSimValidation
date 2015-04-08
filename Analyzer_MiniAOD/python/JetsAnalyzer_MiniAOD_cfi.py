@@ -6,6 +6,8 @@ JetsAnalyzer_MiniAOD = cms.EDAnalyzer("JetsAnalyzer_MiniAOD",
     recoJetCollection        = cms.InputTag("selectedRecoJets"),
     genJetCollection         = cms.InputTag("selectedGenJets"),
 
+    CollectionName = cms.string("ak4PFJetsCHS"),
+    
     #Debug
     Debug                 = cms.untracked.bool(False),
 

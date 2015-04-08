@@ -7,6 +7,8 @@ MuonAnalyzer_MiniAOD = cms.EDAnalyzer("MuonAnalyzer_MiniAOD",
     GenMuonCollection     = cms.InputTag("selectedGenMuons"),
     PVCollection          = cms.InputTag("offlineSlimmedPrimaryVertices"),
 
+    CollectionName = cms.string("Muons"),
+
     #Debug
     Debug                 = cms.untracked.bool(False),
 

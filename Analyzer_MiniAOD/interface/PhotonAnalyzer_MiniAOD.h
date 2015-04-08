@@ -81,6 +81,7 @@ private:
   edm::EDGetTokenT<reco::CandidateCollection> theGenPhotonCollection_;
   std::vector<edm::ParameterSet> thePhotonIDs_;
 
+  std::string theCollectionName_;
 
   // cuts:
 
