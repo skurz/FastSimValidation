@@ -1,0 +1,36 @@
+# quick start
+
+produce some dummy histograms
+```
+./generateTestHist.py
+```
+
+run a test
+```
+./processHist.py testHist.root mycfg.py hist.root
+```
+- 1st argument: root file with raw histograms
+- 2nd argument: cfg file that defines how raw histograms are transformed into efficiency, scale and resolution plots
+- 3rd argument: root file with final histograms
+
+
+# code
+
+generateTestHists.py
+   - generates some histograms to test the code
+
+histprocessing.py
+   - defines classes used to configure transformation from raw to final plots
+   - defines how raw plots are transformed into final plots (getHits functions)
+
+mycfg.py
+   - an example cfg file to ilustrate how the code functions or is supposed to function
+
+processHist.py
+   - the executable, see 'quick start' above for instructions
+
+
+# notes
+
+This little framework is prety simple right now.
+Unfortunately that is likely to change when we add more and more features.
