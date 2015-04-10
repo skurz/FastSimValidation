@@ -278,8 +278,8 @@ void bJetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   for(int i_particle = 0; i_particle < 3; ++i_particle){
     ibooker_.setCurrentFolder(theCollectionName_+"/"+"Gen"+"/"+matchedParticleNames[i_particle]);
     
-    h_truePt_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "truePt_genJet","true pt vs total# genJets",50,0.,500.);
-    h_trueEta_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "trueEta_genJet","true eta vs total# genJets",50,-5.,5.);
+    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","true pt vs total # genJets",50,0.,500.);
+    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","true eta vs total # genJets",50,-5.,5.);
   }
 
   for(int i_particle = 0; i_particle < 3; ++i_particle){
@@ -287,8 +287,8 @@ void bJetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
     for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
       ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"/"+matchedParticleNames[i_particle]);
 
-      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_recoJet","true pt vs total# recoJets for " + *i_shortName + " id",50,0.,500.);
-      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_recoJet","true eta vs total# recoJets for " + *i_shortName + " id",50,-5.,5.);
+      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","true pt vs total # matchedJets for " + *i_shortName + " id",50,0.,500.);
+      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","true eta vs total # matchedJets for " + *i_shortName + " id",50,-5.,5.);
       ++histoID;
     }
   }
@@ -308,18 +308,19 @@ void bJetsAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, 
   else if(matchedParticle.compare("matchedUDSGjet") == 0) particleNr = 2;
   else{std::cout << "JetsAnalyzer_MiniAOD: String for histogram filling has to be element of {matchedBjet, matchedCjet, matchedUDSGjet}." << std::endl; return;}
 
-  for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
-  {
-     
+  for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle){   
     // Match Gen <-> Reco
-    const reco::Candidate* matchedGenParticle = NULL;
-    for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
-        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedGenParticle = (*i_genParticle);
+    const reco::Candidate* matchedParticle = NULL;
+    for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle){
+        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3){
+          matchedParticle = *i_recoParticle;
+          break;
+        }
     }
-    if(!matchedGenParticle) continue;
+    if(!matchedParticle) continue;
   
-    h_truePt_recoParticle[particleNr][histoID]->Fill(matchedGenParticle->pt());
-    h_trueEta_recoParticle[particleNr][histoID]->Fill(matchedGenParticle->eta());
+    h_truePt_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->pt());
+    h_trueEta_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->eta());
   }
 
 }

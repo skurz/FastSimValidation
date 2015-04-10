@@ -10,8 +10,8 @@ bJetsAnalyzer_MiniAOD = cms.EDAnalyzer("bJetsAnalyzer_MiniAOD",
     bJetIDs	= cms.VPSet(
       cms.PSet(
   		  idString	= cms.string("combinedInclusiveSecondaryVertexV2BJetTags"),
-  		  cutValue	= cms.double(0.5),
-  		  idShortName = cms.string("CISVV2")
+  		  cutValue	= cms.double(0.941),
+  		  idShortName = cms.string("CISVV2_Tight")
   		),
 	),
 

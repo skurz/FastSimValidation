@@ -3,26 +3,50 @@
 import ROOT as rt
 
 class Efficiency:
-    def __init__(self,denominator=None,numerator=None,directory=None,):
+    def __init__(self,denominator=None,numerator=None,collection=None,ID=None):
         self.denominator = denominator
         self.numerator = numerator
-        self.directory = directory
+        self.collection = collection
+        self.ID = ID
+
     def getHist(self,file):
-        h_denominator = file.Get(self.directory + "/" + self.denominator).Clone()
-        h_numerator = file.Get(self.directory + "/" + self.numerator).Clone()
-        h_numerator.Divide(h_denominator)
-        return h_numerator
+        if self.ID.count("/")==0:
+            h_denominator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + "Gen/" + self.denominator).Clone()
+        else:
+            h_denominator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + "Gen/" + self.ID.split("/", 1)[1] + "/" + self.denominator).Clone()    
+        h_numerator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + self.ID + "/" + self.numerator).Clone()
+
+        h_numerator.Divide(h_numerator, h_denominator, 1, 1, "B")
+        h_numerator.SetName("eff_" + h_numerator.GetName())
+        h_numerator.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
+        # Errors are not correct if h_numerator.Divide(h_denominator) is used. Instead use:
+        # h_efficiency.Divide(h_after_selection,h_before_selection,1.0,1.0,"B")
+        # or for assymetric errors
+        # g_efficiency = ROOT.TGraphAsymmErrors()
+        # g_efficiency.Divide(h_after_selection,h_before_selection,"cl=0.683 b(1,1) mode")
+        return [h_numerator]
 
 class Response:
-    def __init__(self,rawhist=None,directory=None):
+    def __init__(self,rawhist=None,collection=None,ID=None):
         self.rawhist = rawhist
-        self.directory = directory
-    #def getHist(file):
-        # translate rawhist into TProfile  with the mean
-        # h_mean = ...
-        # create the TProfile with the RMS
-        # h_RMS = 
-        # return [h_mean,h_RMS]
+        self.collection = collection
+        self.ID = ID
+
+    def getHist(self,file):
+        h_rawhist = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + self.ID + "/" + self.rawhist).Clone()
+
+        NbinsX = h_rawhist.GetNbinsX()
+        h_mean = rt.TH1D("scale_" + h_rawhist.GetName(), "scale: " + h_rawhist.GetTitle(), NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
+        h_RMS = rt.TH1D("res_" + h_rawhist.GetName(), "res: " + h_rawhist.GetTitle(), NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
+
+        for xBin in range(1, NbinsX):
+            h_yProj = h_rawhist.ProjectionY(h_rawhist.GetName() + "_" + str(xBin), xBin, xBin, "e")
+            h_mean.SetBinContent(xBin, h_yProj.GetMean())
+            h_mean.SetBinError(xBin, h_yProj.GetMeanError())            
+            h_RMS.SetBinContent(xBin, h_yProj.GetRMS())
+            h_RMS.SetBinError(xBin, h_yProj.GetRMSError())
+
+        return [h_mean,h_RMS]
     
 
     

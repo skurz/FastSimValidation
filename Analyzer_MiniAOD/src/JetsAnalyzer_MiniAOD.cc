@@ -122,29 +122,30 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
 // Fill Histrograms
 //-------------------------------
 
-for (std::vector<const pat::Jet *>::const_iterator i_patJet = patJets.begin(); i_patJet != patJets.end(); ++i_patJet)
-{
-  const pat::Jet* i_patJetPtr = *i_patJet;
+for (std::vector<const reco::GenJet*>::const_iterator i_genjet = genJets.begin(); i_genjet != genJets.end(); ++i_genjet){
 
   // Match Gen <-> Reco
-  const reco::GenJet* matchedGenJet = NULL;
-  for (std::vector<const reco::GenJet*>::const_iterator i_genjet = genJets.begin(); i_genjet != genJets.end(); ++i_genjet) {
-      if(deltaR(*i_patJetPtr, **i_genjet) < 0.3) matchedGenJet = (*i_genjet);
+  const pat::Jet* matchedJet = NULL;
+  for (std::vector<const pat::Jet *>::const_iterator i_patJet = patJets.begin(); i_patJet != patJets.end(); ++i_patJet)  {
+    if(deltaR(**i_patJet, **i_genjet) < 0.3){
+      matchedJet = (*i_patJet);
+      break;
+    }
   }
-  if(!matchedGenJet) continue;
+  if(!matchedJet) continue;
 
   // Fill histograms 
-  h_truePt_recoJet->Fill(matchedGenJet->pt());
-  h_trueEta_recoJet->Fill(matchedGenJet->eta());
+  h_truePt_recoJet->Fill((*i_genjet)->pt());
+  h_trueEta_recoJet->Fill((*i_genjet)->eta());
 
-  h_truePt_jetRelPtDiff->Fill(matchedGenJet->pt(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
-  h_trueEta_jetRelPtDiff->Fill(matchedGenJet->eta(), (i_patJetPtr->pt()-matchedGenJet->pt())/matchedGenJet->pt());
+  h_truePt_jetRelPtDiff->Fill((*i_genjet)->pt(), (matchedJet->pt()-(*i_genjet)->pt())/(*i_genjet)->pt());
+  h_trueEta_jetRelPtDiff->Fill((*i_genjet)->eta(), (matchedJet->pt()-(*i_genjet)->pt())/(*i_genjet)->pt());
 
-  h_truePt_jetEtaDiff->Fill(matchedGenJet->pt(), i_patJetPtr->eta()-matchedGenJet->eta());
-  h_trueEta_jetEtaDiff->Fill(matchedGenJet->eta(), i_patJetPtr->eta()-matchedGenJet->eta());
+  h_truePt_jetEtaDiff->Fill((*i_genjet)->pt(), matchedJet->eta()-(*i_genjet)->eta());
+  h_trueEta_jetEtaDiff->Fill((*i_genjet)->eta(), matchedJet->eta()-(*i_genjet)->eta());
 
-  h_truePt_jetPhiDiff->Fill(matchedGenJet->pt(), i_patJetPtr->phi()-matchedGenJet->phi());
-  h_trueEta_jetPhiDiff->Fill(matchedGenJet->eta(), i_patJetPtr->phi()-matchedGenJet->phi());  
+  h_truePt_jetPhiDiff->Fill((*i_genjet)->pt(), matchedJet->phi()-(*i_genjet)->phi());
+  h_trueEta_jetPhiDiff->Fill((*i_genjet)->eta(), matchedJet->phi()-(*i_genjet)->phi());  
 }
 
 // Gen
@@ -153,34 +154,6 @@ for (std::vector<const reco::GenJet*>::const_iterator i_genjet = genJets.begin()
     h_truePt_genJet->Fill((*i_genjet)->pt());
     h_trueEta_genJet->Fill((*i_genjet)->eta());
 }
-
-  // b Tagging TODO!
-/*  const std::vector<std::pair<std::string,float>> discriVec = patJets.begin()->getPairDiscri();
-
-  if(debug_)
-  for(std::vector<std::pair<std::string,float>>::const_iterator i_discriVec = discriVec.begin(); i_discriVec != discriVec.end(); ++i_discriVec){
-    //if(i_discriVec->first != NULL) std::cout << i_discriVec->first << std::endl;
-  }
-
-  for (std::vector<const pat::Jet *>::const_iterator i_patJet = patJets.begin(); i_patJet != patJets.end(); ++i_patJet)
-  {
-    if(debug_ && (abs(i_patJetPtr->partonFlavour()) == 5 || i_patJetPtr->bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags") > 0.941))
-    std::cout << (abs(i_patJetPtr->partonFlavour()) == 5) << "; " << (i_patJetPtr->bDiscriminator("combinedInclusiveSecondaryVertexV2BJetTags") > 0.941) << std::endl;
-  }
-*/
-
-/*Content of MiniAOD
-  jetBProbabilityBJetTags
-  jetProbabilityBJetTags
-  trackCountingHighPurBJetTags
-  trackCountingHighEffBJetTags
-  simpleSecondaryVertexHighEffBJetTags
-  simpleSecondaryVertexHighPurBJetTags
-  combinedInclusiveSecondaryVertexV2BJetTags
-  pfCombinedSecondaryVertexBJetTags
-  combinedMVABJetTags
-*/
-
 
 
 }
@@ -209,25 +182,25 @@ void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 {
   ibooker_.cd();
 
-  ibooker_.setCurrentFolder(theCollectionName_);
+  ibooker_.setCurrentFolder(theCollectionName_+"/Gen");
 
-  h_truePt_genJet = ibooker_.book1D("truePt_genJet","true pt vs total# genJets",50,0.,500.);
-  h_trueEta_genJet = ibooker_.book1D("trueEta_genJet","true eta vs total# genJets",50,-5.,5.);
+  h_truePt_genJet = ibooker_.book1D("truePt_gen","true pt vs total # genJets",50,0.,500.);
+  h_trueEta_genJet = ibooker_.book1D("trueEta_gen","true eta vs total # genJets",50,-5.,5.);
 
 
-  ibooker_.setCurrentFolder(theCollectionName_+"/"+"LooseID");
+  ibooker_.setCurrentFolder(theCollectionName_+"/LooseID");
 
-  h_truePt_jetRelPtDiff = ibooker_.book2D("truePt_jetRelPtDiff","true pt vs (reco pt - true pt) / (true pt)",50,0.,500.,20,-1.,1.);
-  h_trueEta_jetRelPtDiff = ibooker_.book2D("trueEta_jetRelPtDiff","true eta vs (reco pt - true pt) / (true pt)",50,-5.,5.,20,-1.,1.);
+  h_truePt_jetRelPtDiff = ibooker_.book2D("truePt_vs_jetRelPtDiff","true pt vs (reco pt - true pt) / (true pt) for loose id",50,0.,500.,20,-1.,1.);
+  h_trueEta_jetRelPtDiff = ibooker_.book2D("trueEta_vs_jetRelPtDiff","true eta vs (reco pt - true pt) / (true pt) for loose id",50,-5.,5.,20,-1.,1.);
 
-  h_truePt_jetEtaDiff = ibooker_.book2D("truePt_jetEtaDiff","true pt vs (reco eta - true eta)",50,0.,500.,20,-0.5,0.5);
-  h_trueEta_jetEtaDiff = ibooker_.book2D("trueEta_jetEtaDiff","true eta vs (reco eta - true eta)",50,-5.,5.,20,-0.5,0.5);
+  h_truePt_jetEtaDiff = ibooker_.book2D("truePt_vs_jetEtaDiff","true pt vs (reco eta - true eta) for loose id",50,0.,500.,20,-0.5,0.5);
+  h_trueEta_jetEtaDiff = ibooker_.book2D("trueEta_vs_jetEtaDiff","true eta vs (reco eta - true eta) for loose id",50,-5.,5.,20,-0.5,0.5);
 
-  h_truePt_jetPhiDiff = ibooker_.book2D("truePt_jetPhiDiff","true pt vs (reco phi - true phi)",50,0.,500.,20,-0.5,0.5);
-  h_trueEta_jetPhiDiff = ibooker_.book2D("trueEta_jetPhiDiff","true eta vs (reco phi - true phi)",50,-5.,5.,20,-0.5,0.5);
+  h_truePt_jetPhiDiff = ibooker_.book2D("truePt_vs_jetPhiDiff","true pt vs (reco phi - true phi) for loose id",50,0.,500.,20,-0.5,0.5);
+  h_trueEta_jetPhiDiff = ibooker_.book2D("trueEta_vs_jetPhiDiff","true eta vs (reco phi - true phi) for loose id",50,-5.,5.,20,-0.5,0.5);
 
-  h_truePt_recoJet = ibooker_.book1D("truePt_recoJet","true pt vs total# recoJets",50,0.,500.);
-  h_trueEta_recoJet = ibooker_.book1D("trueEta_recoJet","true eta vs total# genJets",50,-5.,5.);
+  h_truePt_recoJet = ibooker_.book1D("truePt_matched","true pt vs total # matchedJets for loose id",50,0.,500.);
+  h_trueEta_recoJet = ibooker_.book1D("trueEta_matched","true eta vs total # matchedJets for loose id",50,-5.,5.);
 
 
   ibooker_.cd();  

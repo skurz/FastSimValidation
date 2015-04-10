@@ -75,8 +75,8 @@ def MiniAODAnalyzer(process,
                                         process.ElectronAnalyzer_MiniAOD *
                                         process.PhotonAnalyzer_MiniAOD *
                                         #process.TauAnalyzer_MiniAOD *
-                                        process.bJetsAnalyzer_MiniAOD *
-                                        process.METAnalyzer_MiniAOD 
+                                        process.bJetsAnalyzer_MiniAOD #*
+                                        #process.METAnalyzer_MiniAOD 
         )
     process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 
