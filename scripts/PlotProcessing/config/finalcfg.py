@@ -11,7 +11,7 @@ Jets = [["ak4PFJetsCHS", ["LooseID"]]]
 bJets = [["ak4PFJetsCHS_bTag", ["CISVV2_Tight/matchedBjet", "CISVV2_Tight/matchedCjet", "CISVV2_Tight/matchedUDSGjet"]]]
 Electrons = [["Electrons", ["vetoID", "looseID", "mediumID", "tightID"]]]
 Muons = [["Muons", ["looseIDIso", "tightIDIso"]]]
-Taus  = [["Taus", ["decayModeFindingOld+byLooseCombinedIsolation", "decayModeFindingOld+byTightIsolation", "decayModeFindingOld+againstElectron", "decayModeFindingNew+byLooseCombinedIsolation"]]]
+Taus  = [["Taus", ["decayModeFindingOld+byLooseCombinedIsolation/matchedTau", "decayModeFindingOld+byTightIsolation/matchedTau", "decayModeFindingOld+againstElectron/matchedTau", "decayModeFindingNew+byLooseCombinedIsolation/matchedTau","decayModeFindingOld+byLooseCombinedIsolation/matchedEl", "decayModeFindingOld+byTightIsolation/matchedEl", "decayModeFindingOld+againstElectron/matchedEl", "decayModeFindingNew+byLooseCombinedIsolation/matchedEl","decayModeFindingOld+byLooseCombinedIsolation/matchedMu", "decayModeFindingOld+byTightIsolation/matchedMu", "decayModeFindingOld+againstElectron/matchedMu", "decayModeFindingNew+byLooseCombinedIsolation/matchedMu","decayModeFindingOld+byLooseCombinedIsolation/matchedJet", "decayModeFindingOld+byTightIsolation/matchedJet", "decayModeFindingOld+againstElectron/matchedJet", "decayModeFindingNew+byLooseCombinedIsolation/matchedJet"]]]
 Photons = [["Photons", ["looseID", "tightID"]]]
 MET = [["MET", ["vs_MetPt", "vs_MetPx", "vs_MetPy", "vs_MetProj", "vs_MetProjOrth"]]]
 
@@ -19,7 +19,7 @@ MET = [["MET", ["vs_MetPt", "vs_MetPx", "vs_MetPy", "vs_MetProj", "vs_MetProjOrt
 Collections = []
 Collections.extend(Electrons)
 Collections.extend(Muons)
-#Collections.extend(Taus)
+Collections.extend(Taus)
 Collections.extend(Photons)
 #Collections.extend(MET)
 
@@ -51,7 +51,7 @@ Collections.extend(Jets)
 Collections.extend(bJets)
 Collections.extend(Electrons)
 Collections.extend(Muons)
-#Collections.extend(Taus)
+Collections.extend(Taus)
 Collections.extend(Photons)
 
 for Col in Collections:

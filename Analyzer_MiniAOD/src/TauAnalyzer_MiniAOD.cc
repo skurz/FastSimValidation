@@ -206,6 +206,7 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
     // Create subset for every ID
   std::vector<std::vector<const pat::Tau*>> idTaus;
 
+  // Taus that pass ID selection
   for(std::vector<std::vector<std::pair<std::string, double>>>::const_iterator i_tauIDvec = idPairs.begin(); i_tauIDvec != idPairs.end(); ++i_tauIDvec){
 
     std::vector<const pat::Tau*> passedTaus;
@@ -227,7 +228,35 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
     for(std::vector<std::pair<std::string,float>>::const_iterator i_tauIDs = (*i_patTau)->tauIDs().begin(); i_tauIDs != (*i_patTau)->tauIDs().end(); ++i_tauIDs){
       std::cout << i_tauIDs->first << std::endl;
     }
-  }   
+  }
+
+  // Hadronic taus on genLevel
+  std::vector<const reco::GenParticle*> hadGenTaus;
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau){
+    const reco::Candidate* i_daughter = *i_genTau;
+    bool foundLepton = false;
+    bool foundHadron = false;
+
+    while(!foundLepton && !foundHadron){
+      for(unsigned int dIndex = 0; dIndex < i_daughter->numberOfDaughters(); dIndex++){
+        int pdgId = std::abs(i_daughter->daughter(dIndex)->pdgId());
+        if(pdgId == 15){
+          i_daughter = i_daughter->daughter(dIndex);
+          break;
+        }else if(pdgId == 11 || pdgId == 13){
+          foundLepton = true;
+          break;
+        }
+        if(dIndex == i_daughter->numberOfDaughters()-1){
+          foundHadron = true;
+        }
+      }
+    }
+
+    if(foundHadron){
+      hadGenTaus.push_back(*i_genTau);
+    }
+  }
   
 
   //-------------------------------
@@ -238,7 +267,7 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
 
   int histID = 0;
   for(std::vector<std::vector<const pat::Tau*>>::iterator i_idTaus = idTaus.begin(); i_idTaus != idTaus.end(); ++i_idTaus){
-    fillHisto("matchedTau", histID, &(*i_idTaus), &genTaus);
+    fillHisto("matchedTau", histID, &(*i_idTaus), &hadGenTaus);
     fillHisto("matchedEl", histID, &(*i_idTaus), &genElectrons);
     fillHisto("matchedMu", histID, &(*i_idTaus), &genMuons);
     fillHisto("matchedJet", histID, &(*i_idTaus), &genJets);
@@ -248,7 +277,7 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
 
 
   // Gen
-  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau) 
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = hadGenTaus.begin(); i_genTau != hadGenTaus.end(); ++i_genTau) 
   {
     h_truePt_genParticle[0]->Fill((*i_genTau)->pt());
     h_trueEta_genParticle[0]->Fill((*i_genTau)->eta());
@@ -306,24 +335,24 @@ void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   ibooker_.cd();
 
   for(int i_particle = 0; i_particle < 4; ++i_particle){
-    ibooker_.setCurrentFolder(theCollectionName_+"/"+matchedParticleNames[i_particle]);
+    ibooker_.setCurrentFolder(theCollectionName_+"/Gen/"+matchedParticleNames[i_particle]);
     
-    h_truePt_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "truePt_genTau","true pt vs total# genParticles",50,0.,500.);
-    h_trueEta_genParticle[i_particle] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + "trueEta_genTau","true eta vs total# genParticles",50,-5.,5.);
+    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","true pt vs total # genTaus",50,0.,500.);
+    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","true eta vs total # genTaus",50,-5.,5.);
   }
 
   for(int i_particle = 0; i_particle < 4; ++i_particle){
     int histoID = 0;
     for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
-      ibooker_.setCurrentFolder(theCollectionName_+"/"+matchedParticleNames[i_particle]+"/"+*i_shortName);
+      ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"/"+matchedParticleNames[i_particle]);
 
-      h_truePt_pt[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
-      h_truePt_eta[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
-      h_trueEta_pt[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
-      h_trueEta_eta[i_particle][histoID] = ibooker_.book2D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
+      h_truePt_pt[i_particle][histoID] = ibooker_.book2D("truePt_vs_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
+      h_truePt_eta[i_particle][histoID] = ibooker_.book2D("truePt_vs_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
+      h_trueEta_pt[i_particle][histoID] = ibooker_.book2D("trueEta_vs_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
+      h_trueEta_eta[i_particle][histoID] = ibooker_.book2D("trueEta_vs_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
       
-      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_truePt_recoTau","true pt vs total# recoTaus for " + *i_shortName + " id",50,0.,500.);
-      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D(matchedParticleNames[i_particle] + "_" + *i_shortName + "ID_trueEta_recoTau","true eta vs total# recoTaus for " + *i_shortName + " id",50,-5.,5.);
+      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","true pt vs total # matchedTaus for " + *i_shortName + " id",50,0.,500.);
+      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","true eta vs total # matchedTaus for " + *i_shortName + " id",50,-5.,5.);
       
       ++histoID;
     }

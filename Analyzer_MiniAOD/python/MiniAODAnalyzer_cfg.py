@@ -74,7 +74,7 @@ def MiniAODAnalyzer(process,
                                         process.MuonAnalyzer_MiniAOD *
                                         process.ElectronAnalyzer_MiniAOD *
                                         process.PhotonAnalyzer_MiniAOD *
-                                        #process.TauAnalyzer_MiniAOD *
+                                        process.TauAnalyzer_MiniAOD *
                                         process.bJetsAnalyzer_MiniAOD #*
                                         #process.METAnalyzer_MiniAOD 
         )
