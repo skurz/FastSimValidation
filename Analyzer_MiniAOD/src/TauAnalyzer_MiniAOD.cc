@@ -346,11 +346,11 @@ void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
     for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
       ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"/"+matchedParticleNames[i_particle]);
 
-      h_truePt_pt[i_particle][histoID] = ibooker_.book2D("truePt_vs_pt", "true pt vs pt for " + *i_shortName + " id", 50,0.,500., 50,0.,500.);
-      h_truePt_eta[i_particle][histoID] = ibooker_.book2D("truePt_vs_eta", "true pt vs eta for " + *i_shortName + " id", 50,0.,500., 50,-5.,5.);
-      h_trueEta_pt[i_particle][histoID] = ibooker_.book2D("trueEta_vs_pt", "true eta vs pt for " + *i_shortName + " id", 50,-5.,5., 50,0.,500.);
-      h_trueEta_eta[i_particle][histoID] = ibooker_.book2D("trueEta_vs_eta", "true eta vs eta for " + *i_shortName + " id", 50,-5.,5., 50,-5.,5.);
-      
+      h_truePt_pt[i_particle][histoID] = ibooker_.book2D("truePt_vs_pt", "true pt vs (reco pt - true pt) / (true pt) for " + *i_shortName + " id", 50,0.,500., 50,-1.,1.);
+      h_truePt_eta[i_particle][histoID] = ibooker_.book2D("truePt_vs_eta", "true pt vs (reco eta - true eta) for " + *i_shortName + " id", 50,0.,500., 50,-0.5,0.5);
+      h_trueEta_pt[i_particle][histoID] = ibooker_.book2D("trueEta_vs_pt", "true eta vs (reco pt - true pt) / (true pt) for " + *i_shortName + " id", 50,-5.,5., 50,-1.,1.);
+      h_trueEta_eta[i_particle][histoID] = ibooker_.book2D("trueEta_vs_eta", "true eta vs (reco eta - true eta) for " + *i_shortName + " id", 50,-5.,5., 50,-0.5,0.5);
+        
       h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","true pt vs total # matchedTaus for " + *i_shortName + " id",50,0.,500.);
       h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","true eta vs total # matchedTaus for " + *i_shortName + " id",50,-5.,5.);
       
@@ -374,23 +374,24 @@ void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, st
   else if(matchedParticle.compare("matchedJet") == 0) particleNr = 3;
   else{std::cout << "TauAnalyzer_MiniAOD: String for histogram filling has to be element of {matchedTau, matchedEl, matchedMu, matchedJet}." << std::endl; return;}
 
-   for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle)
-  {
+  for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
      
     // Match Gen <-> Reco
-    const reco::Candidate* matchedGenParticle = NULL;
-    for (std::vector<const reco::Candidate*>::const_iterator i_genParticle = genCollection->begin(); i_genParticle != genCollection->end(); ++i_genParticle) {
-        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedGenParticle = (*i_genParticle);
+    const reco::Candidate* matchedParticle = NULL;
+    for (std::vector<const reco::Candidate*>::const_iterator i_recoParticle = recoCollection->begin(); i_recoParticle != recoCollection->end(); ++i_recoParticle){    
+        if(deltaR(**i_recoParticle, **i_genParticle) < 0.3) matchedParticle = (*i_recoParticle);
+        break;
     }
-    if(!matchedGenParticle) continue;
+    if(!matchedParticle) continue;
   
-    h_truePt_recoParticle[particleNr][histoID]->Fill(matchedGenParticle->pt());
-    h_trueEta_recoParticle[particleNr][histoID]->Fill(matchedGenParticle->eta());
+    h_truePt_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->pt());
+    h_trueEta_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->eta());
 
-    h_truePt_pt[particleNr][histoID]->Fill(matchedGenParticle->pt(), (*i_recoParticle)->pt()); 
-    h_truePt_eta[particleNr][histoID]->Fill(matchedGenParticle->pt(), (*i_recoParticle)->eta());
-    h_trueEta_pt[particleNr][histoID]->Fill(matchedGenParticle->eta(), (*i_recoParticle)->pt());
-    h_trueEta_eta[particleNr][histoID]->Fill(matchedGenParticle->eta(), (*i_recoParticle)->eta());
+    h_truePt_pt[particleNr][histoID]->Fill((*i_genParticle)->pt(), (matchedParticle->pt()-(*i_genParticle)->pt())/(*i_genParticle)->pt()); 
+    h_truePt_eta[particleNr][histoID]->Fill((*i_genParticle)->pt(), matchedParticle->eta()-(*i_genParticle)->eta());
+    h_trueEta_pt[particleNr][histoID]->Fill((*i_genParticle)->eta(), (matchedParticle->pt()-(*i_genParticle)->pt())/(*i_genParticle)->pt());
+    h_trueEta_eta[particleNr][histoID]->Fill((*i_genParticle)->eta(), matchedParticle->eta()-(*i_genParticle)->eta());
+
   }
 
 }

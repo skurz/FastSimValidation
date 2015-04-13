@@ -16,15 +16,19 @@ class Efficiency:
             h_denominator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + "Gen/" + self.ID.split("/", 1)[1] + "/" + self.denominator).Clone()    
         h_numerator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + self.ID + "/" + self.numerator).Clone()
 
-        h_numerator.Divide(h_numerator, h_denominator, 1, 1, "B")
-        h_numerator.SetName("eff_" + h_numerator.GetName())
-        h_numerator.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
-        # Errors are not correct if h_numerator.Divide(h_denominator) is used. Instead use:
-        # h_efficiency.Divide(h_after_selection,h_before_selection,1.0,1.0,"B")
-        # or for assymetric errors
-        # g_efficiency = ROOT.TGraphAsymmErrors()
-        # g_efficiency.Divide(h_after_selection,h_before_selection,"cl=0.683 b(1,1) mode")
-        return [h_numerator]
+        g_efficiency = rt.TGraphAsymmErrors()
+        g_efficiency.Divide(h_numerator,h_denominator,"cl=0.683 b(1,1) mode")
+
+        g_efficiency.SetName("eff_" + h_numerator.GetName())
+        g_efficiency.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
+        return [g_efficiency]
+
+        # In case TH1 are needed
+        #h_numerator.Divide(h_numerator, h_denominator, 1, 1, "B")
+        #h_numerator.SetName("eff_" + h_numerator.GetName())
+        #h_numerator.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
+        #return [h_numerator]
+
 
 class Response:
     def __init__(self,rawhist=None,collection=None,ID=None):

@@ -21,6 +21,7 @@ Collections.extend(Electrons)
 Collections.extend(Muons)
 Collections.extend(Taus)
 Collections.extend(Photons)
+Collections.extend(Jets)
 #Collections.extend(MET)
 
 for Col in Collections:
@@ -38,12 +39,8 @@ Collections.extend(Jets)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = "truePt_vs_jetEtaDiff", collection = Col[0], ID = IDs),
-            Response(rawhist = "truePt_vs_jetPhiDiff", collection = Col[0], ID = IDs),
-            Response(rawhist = "truePt_vs_jetRelPtDiff", collection = Col[0], ID = IDs),
-            Response(rawhist = "trueEta_vs_jetEtaDiff", collection = Col[0], ID = IDs),
-            Response(rawhist = "trueEta_vs_jetPhiDiff", collection = Col[0], ID = IDs),
-            Response(rawhist = "trueEta_vs_jetRelPtDiff", collection = Col[0], ID = IDs),
+            Response(rawhist = "truePt_vs_phi", collection = Col[0], ID = IDs),
+            Response(rawhist = "trueEta_vs_phi", collection = Col[0], ID = IDs),
             ])
 
 Collections = []
