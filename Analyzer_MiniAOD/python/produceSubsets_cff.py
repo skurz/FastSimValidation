@@ -40,7 +40,7 @@ produceJets = cms.Sequence(
 # TightID and Isolation Cuts are performed within the Analyzer
 selectedMuons = cms.EDFilter("CandViewSelector",
     src = cms.InputTag("slimmedMuons"),
-    cut = cms.string("abs(eta)<2.5 && pt>15. && isLooseMuon()"), 
+    cut = cms.string("abs(eta)<2.5 && pt>15."),  #&& isLooseMuon()
     filter = cms.bool(False)
     )
 

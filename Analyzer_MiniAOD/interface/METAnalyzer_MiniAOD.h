@@ -30,6 +30,10 @@
 #include "DataFormats/PatCandidates/interface/MET.h"
 #include "DataFormats/METReco/interface/METCollection.h"
 
+// GenMET
+#include "DataFormats/METReco/interface/GenMET.h"
+#include "DataFormats/METReco/interface/GenMETCollection.h"
+
 // Vertex utilities
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/VertexReco/interface/VertexFwd.h"
@@ -71,11 +75,8 @@ private:
   math::XYZPoint PVPoint_;
 
   //variables from config file
-  edm::EDGetTokenT<pat::ElectronCollection> theElectronCollection_;
-  edm::EDGetTokenT<pat::MuonCollection> theMuonCollection_;
   edm::EDGetTokenT<pat::JetCollection> theRecoJetCollection_;
-  edm::EDGetTokenT<reco::GenJetCollection> theGenJetCollection_;
-  edm::EDGetTokenT<pat::METCollection> theMETCollection_;
+  edm::EDGetTokenT<pat::METCollection> theRecoMETCollection_;
   edm::EDGetTokenT<reco::VertexCollection> thePVCollection_;
 
   std::string theCollectionName_;

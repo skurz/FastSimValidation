@@ -4,8 +4,7 @@ METAnalyzer_MiniAOD = cms.EDAnalyzer("METAnalyzer_MiniAOD",
     #fullSim                  = cms.untracked.bool(True),  #Choose 'False' for FastSim
 
     recoJetCollection        = cms.InputTag("slimmedJets"),
-    genJetCollection         = cms.InputTag("slimmedGenJets"),
-    METCollection            = cms.InputTag("slimmedMETs"),
+    recoMETCollection        = cms.InputTag("slimmedMETs"),
     PVCollection             = cms.InputTag("offlineSlimmedPrimaryVertices"),
     
     #Trigger: To be implemented!

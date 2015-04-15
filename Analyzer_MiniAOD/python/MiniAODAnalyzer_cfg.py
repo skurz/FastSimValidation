@@ -36,6 +36,8 @@ def MiniAODAnalyzer(process,
         SkipEvent = cms.untracked.vstring('ProductNotFound')
     )
 
+    process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+
     # Input source
     process.source = cms.Source("PoolSource",
         secondaryFileNames = cms.untracked.vstring(),
@@ -75,8 +77,8 @@ def MiniAODAnalyzer(process,
                                         process.ElectronAnalyzer_MiniAOD *
                                         process.PhotonAnalyzer_MiniAOD *
                                         process.TauAnalyzer_MiniAOD *
-                                        process.bJetsAnalyzer_MiniAOD #*
-                                        #process.METAnalyzer_MiniAOD 
+                                        process.bJetsAnalyzer_MiniAOD *
+                                        process.METAnalyzer_MiniAOD 
         )
     process.DQMoutput_step = cms.EndPath(process.DQMoutput)
 
