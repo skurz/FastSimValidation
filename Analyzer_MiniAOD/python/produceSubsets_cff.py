@@ -129,7 +129,7 @@ selectedTaus = cms.EDFilter("CandViewSelector",
 genTaus = cms.EDFilter("PdgIdAndStatusCandViewSelector",
     src = cms.InputTag("prunedGenParticles"), 
     pdgId = cms.vint32(-15, 15),
-    status = cms.vint32(3),
+    status = cms.vint32(2,3),
     filter = cms.bool(False)
     )
 

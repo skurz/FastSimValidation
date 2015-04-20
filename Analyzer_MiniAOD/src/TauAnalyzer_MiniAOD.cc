@@ -230,9 +230,32 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
     }
   }
 
+
+  // Make sure there is no overlap between status 2 and 3 taus
+  std::vector<const reco::GenParticle*> cleanedGenTaus;
+  std::vector<const reco::GenParticle*> stat2Taus;
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau){
+    if((*i_genTau)->status() == 3) cleanedGenTaus.push_back(*i_genTau);
+    if((*i_genTau)->status() == 2) stat2Taus.push_back(*i_genTau);
+  }
+
+  for (std::vector<const reco::GenParticle*>::const_iterator i_statTau = stat2Taus.begin(); i_statTau != stat2Taus.end(); ++i_statTau){
+    bool foundMatch = false;
+
+    for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = cleanedGenTaus.begin(); i_genTau != cleanedGenTaus.end(); ++i_genTau){
+      if(deltaR(**i_statTau, **i_genTau) < 0.1){
+        foundMatch = true;
+        break;
+      }
+    }
+
+    if(!foundMatch) cleanedGenTaus.push_back(*i_statTau);
+  }
+
+
   // Hadronic taus on genLevel
   std::vector<const reco::GenParticle*> hadGenTaus;
-  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = genTaus.begin(); i_genTau != genTaus.end(); ++i_genTau){
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = cleanedGenTaus.begin(); i_genTau != cleanedGenTaus.end(); ++i_genTau){
     const reco::Candidate* i_daughter = *i_genTau;
     bool foundLepton = false;
     bool foundHadron = false;

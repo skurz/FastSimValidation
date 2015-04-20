@@ -9,10 +9,20 @@ bJetsAnalyzer_MiniAOD = cms.EDAnalyzer("bJetsAnalyzer_MiniAOD",
 
     bJetIDs	= cms.VPSet(
       cms.PSet(
-  		  idString	= cms.string("combinedInclusiveSecondaryVertexV2BJetTags"),
-  		  cutValue	= cms.double(0.941),
-  		  idShortName = cms.string("CISVV2_Tight")
+  		  idString	= cms.string("combinedSecondaryVertexBJetTags"),
+  		  cutValue	= cms.double(0.244),
+  		  idShortName = cms.string("CSVL")
   		),
+      cms.PSet(
+        idString  = cms.string("combinedSecondaryVertexBJetTags"),
+        cutValue  = cms.double(0.679),
+        idShortName = cms.string("CSVM")
+      ),
+      cms.PSet(
+        idString  = cms.string("combinedSecondaryVertexBJetTags"),
+        cutValue  = cms.double(0.898),
+        idShortName = cms.string("CSVT")
+      ),
 	),
 
     CollectionName = cms.string("ak4PFJetsCHS_bTag"),
@@ -24,12 +34,15 @@ bJetsAnalyzer_MiniAOD = cms.EDAnalyzer("bJetsAnalyzer_MiniAOD",
 )
 
   # Content of MiniAOD
-  # jetBProbabilityBJetTags
-  # jetProbabilityBJetTags
-  # trackCountingHighPurBJetTags
-  # trackCountingHighEffBJetTags
-  # simpleSecondaryVertexHighEffBJetTags
-  # simpleSecondaryVertexHighPurBJetTags
-  # combinedInclusiveSecondaryVertexV2BJetTags
-  # pfCombinedSecondaryVertexBJetTags
-  # combinedMVABJetTags
+  # combinedSecondaryVertexBJetTags
+  # pfJetBProbabilityBJetTags
+  # pfJetProbabilityBJetTags
+  # pfTrackCountingHighPurBJetTags
+  # pfTrackCountingHighEffBJetTags
+  # pfSimpleSecondaryVertexHighEffBJetTags
+  # pfSimpleSecondaryVertexHighPurBJetTags
+  # pfCombinedSecondaryVertexV2BJetTags
+  # pfCombinedInclusiveSecondaryVertexV2BJetTags
+  # pfCombinedSecondaryVertexSoftLeptonBJetTags
+  # pfCombinedMVABJetTags
+

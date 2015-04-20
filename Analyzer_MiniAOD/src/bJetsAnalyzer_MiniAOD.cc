@@ -153,6 +153,7 @@ for(std::vector<std::pair<std::string, double>>::const_iterator i_bJetID = idPai
   }
 
   bJets.push_back(passedJets);
+
 }
 
 if(debug_)
@@ -302,6 +303,7 @@ void bJetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 
 void bJetsAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, std::vector<const reco::Candidate*>* recoCollection, std::vector<const reco::Candidate*>* genCollection){
 
+
   int particleNr = 0;
   if(matchedParticle.compare("matchedBjet") == 0) particleNr = 0;
   else if(matchedParticle.compare("matchedCjet") == 0) particleNr = 1;
@@ -318,7 +320,7 @@ void bJetsAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, 
         }
     }
     if(!matchedParticle) continue;
-  
+
     h_truePt_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->pt());
     h_trueEta_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->eta());
   }
