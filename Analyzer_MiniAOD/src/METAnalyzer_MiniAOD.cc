@@ -261,48 +261,48 @@ void METAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   ibooker_.cd();
   ibooker_.setCurrentFolder(theCollectionName_+"/vs_MetPt");
 
-  h_HT_metPt = ibooker_.book2D("HT_vs", "metPt vs HT", 50., 0., 2000., 50., 0., 2000.);
-  h_Nvertex_metPt = ibooker_.book2D("Nvertex_vs", "metPt vs # vertex", 50., 0., 50., 50., 0., 2000.);
-  h_Thrust_metPt = ibooker_.book2D("Thrust_vs", "metPt vs Thrust", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_SumET_metPt = ibooker_.book2D("SumET_vs", "metPt vs SumET", 50., 0., 2000., 50., 0., 4000.);
-  h_NJets_metPt = ibooker_.book2D("NJets_vs", "metPt vs # jets", 20, 0., 20., 50., 0., 2000.);
-  h_genMET_metPt = ibooker_.book2D("genMET_vs", "metPt vs genMET", 50., 0., 2000., 50., 0., 2000.);
+  h_HT_metPt = ibooker_.book2D("HT_vs", "HT vs metPt", 50., 0., 2000., 50., 0., 2000.);
+  h_Nvertex_metPt = ibooker_.book2D("Nvertex_vs", "# vertex vs metPt", 50., 0., 50., 50., 0., 2000.);
+  h_Thrust_metPt = ibooker_.book2D("Thrust_vs", "Thrust vs metPt", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_SumET_metPt = ibooker_.book2D("SumET_vs", "SumET vs metPt", 50., 0., 2000., 50., 0., 4000.);
+  h_NJets_metPt = ibooker_.book2D("NJets_vs", "# jets vs metPt", 20, 0., 20., 50., 0., 2000.);
+  h_genMET_metPt = ibooker_.book2D("genMET_vs", "genMET vs metPt", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/vs_MetPx");
 
-  h_HT_metPx = ibooker_.book2D("HT_vs", "metPx vs HT", 50., 0., 2000., 50., 0., 2000.);
-  h_Nvertex_metPx = ibooker_.book2D("Nvertex_vs", "metPx vs # vertex", 50., 0., 50., 50., 0., 2000.);
-  h_Thrust_metPx = ibooker_.book2D("Thrust_vs", "metPx vs Thrust", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_SumET_metPx = ibooker_.book2D("SumET_vs", "metPx vs SumET", 50., 0., 2000., 50., 0., 4000.);
-  h_NJets_metPx = ibooker_.book2D("NJets_vs", "metPx vs # jets", 20, 0., 20., 50., 0., 2000.);
-  h_genMET_metPx = ibooker_.book2D("genMET_vs", "metPx vs genMET", 50., 0., 2000., 50., 0., 2000.);
+  h_HT_metPx = ibooker_.book2D("HT_vs", "HT vs metPx", 50., 0., 2000., 50., 0., 2000.);
+  h_Nvertex_metPx = ibooker_.book2D("Nvertex_vs", "# vertex vs metPx", 50., 0., 50., 50., 0., 2000.);
+  h_Thrust_metPx = ibooker_.book2D("Thrust_vs", "Thrust vs metPx", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_SumET_metPx = ibooker_.book2D("SumET_vs", "SumET vs metPx", 50., 0., 2000., 50., 0., 4000.);
+  h_NJets_metPx = ibooker_.book2D("NJets_vs", "# jets vs metPx", 20, 0., 20., 50., 0., 2000.);
+  h_genMET_metPx = ibooker_.book2D("genMET_vs", "genMET vs metPx", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/vs_MetPy");
 
-  h_HT_metPy = ibooker_.book2D("HT_vs", "metPy vs HT", 50., 0., 2000., 50., 0., 2000.);
-  h_Nvertex_metPy = ibooker_.book2D("Nvertex_vs", "metPy vs # vertex", 50., 0., 50., 50., 0., 2000.);
-  h_Thrust_metPy = ibooker_.book2D("Thrust_vs", "metPy vs Thrust", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_SumET_metPy = ibooker_.book2D("SumET_vs", "metPy vs SumET", 50., 0., 2000., 50., 0., 4000.);
-  h_NJets_metPy = ibooker_.book2D("NJets_vs", "metPy vs # jets", 20, 0., 20., 50., 0., 2000.);
-  h_genMET_metPy = ibooker_.book2D("genMET_vs", "metPy vs genMET", 50., 0., 2000., 50., 0., 2000.);
+  h_HT_metPy = ibooker_.book2D("HT_vs", "HT vs metPy", 50., 0., 2000., 50., 0., 2000.);
+  h_Nvertex_metPy = ibooker_.book2D("Nvertex_vs", "# vertex vs metPy", 50., 0., 50., 50., 0., 2000.);
+  h_Thrust_metPy = ibooker_.book2D("Thrust_vs", "Thrust vs metPy", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_SumET_metPy = ibooker_.book2D("SumET_vs", "SumET vs metPy", 50., 0., 2000., 50., 0., 4000.);
+  h_NJets_metPy = ibooker_.book2D("NJets_vs", "# jets vs metPy", 20, 0., 20., 50., 0., 2000.);
+  h_genMET_metPy = ibooker_.book2D("genMET_vs", "genMET vs metPy", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/vs_MetProj");
 
-  h_HT_metProj = ibooker_.book2D("HT_vs", "metProj_thrust vs HT", 50., 0., 2000., 50., 0., 2000.);
-  h_Nvertex_metProj = ibooker_.book2D("Nvertex_vs", "metProj_thrust vs # vertex", 50., 0., 50., 50., 0., 2000.);
-  h_Thrust_metProj = ibooker_.book2D("Thrust_vs", "metProj_thrust vs Thrust", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_SumET_metProj = ibooker_.book2D("SumET_vs", "metProj_thrust vs SumET", 50., 0., 2000., 50., 0., 4000.);
-  h_NJets_metProj = ibooker_.book2D("NJets_vs", "metProj_thrust vs # jets", 20, 0., 20., 50., 0., 2000.);
-  h_genMET_metProj = ibooker_.book2D("genMET_vs", "metProj_thrust vs genMET", 50., 0., 2000., 50., 0., 2000.);
+  h_HT_metProj = ibooker_.book2D("HT_vs", "HT vs metProj_thrust", 50., 0., 2000., 50., 0., 2000.);
+  h_Nvertex_metProj = ibooker_.book2D("Nvertex_vs", "# vertex vs metProj_thrust", 50., 0., 50., 50., 0., 2000.);
+  h_Thrust_metProj = ibooker_.book2D("Thrust_vs", "Thrust vs metProj_thrust", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_SumET_metProj = ibooker_.book2D("SumET_vs", "SumET vs metProj_thrust", 50., 0., 2000., 50., 0., 4000.);
+  h_NJets_metProj = ibooker_.book2D("NJets_vs", "# jets vs metProj_thrust", 20, 0., 20., 50., 0., 2000.);
+  h_genMET_metProj = ibooker_.book2D("genMET_vs", "genMET vs metProj_thrust", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/vs_MetProjOrth");
 
-  h_HT_metProjOrth = ibooker_.book2D("HT_vs", "metProj_thrustOrth vs HT", 50., 0., 2000., 50., 0., 2000.);
-  h_Nvertex_metProjOrth = ibooker_.book2D("Nvertex_vs", "metProj_thrustOrth vs # vertex", 50., 0., 50., 50., 0., 2000.);
-  h_Thrust_metProjOrth = ibooker_.book2D("Thrust_vs", "metProj_thrustOrth vs Thrust", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_SumET_metProjOrth = ibooker_.book2D("SumET_vs", "metProj_thrustOrth vs SumET", 50., 0., 2000., 50., 0., 4000.);
-  h_NJets_metProjOrth = ibooker_.book2D("NJets_vs", "metProj_thrustOrth vs # jets", 20, 0., 20., 50., 0., 2000.);
-  h_genMET_metProjOrth = ibooker_.book2D("genMET_vs", "metProj_thrustOrth vs genMET", 50., 0., 2000., 50., 0., 2000.);
+  h_HT_metProjOrth = ibooker_.book2D("HT_vs", "HT vs metProj_thrustOrth", 50., 0., 2000., 50., 0., 2000.);
+  h_Nvertex_metProjOrth = ibooker_.book2D("Nvertex_vs", "# vertex vs metProj_thrustOrth", 50., 0., 50., 50., 0., 2000.);
+  h_Thrust_metProjOrth = ibooker_.book2D("Thrust_vs", "Thrust vs metProj_thrustOrth", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_SumET_metProjOrth = ibooker_.book2D("SumET_vs", "SumET vs metProj_thrustOrth", 50., 0., 2000., 50., 0., 4000.);
+  h_NJets_metProjOrth = ibooker_.book2D("NJets_vs", "# jets vs metProj_thrustOrth", 20, 0., 20., 50., 0., 2000.);
+  h_genMET_metProjOrth = ibooker_.book2D("genMET_vs", "genMET vs metProj_thrustOrth", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.cd();  
 
