@@ -54,12 +54,12 @@ Collections.extend(MET)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = "HT_vs", collection = Col[0], ID = IDs),
-            Response(rawhist = "NJets_vs", collection = Col[0], ID = IDs),
-            Response(rawhist = "Nvertex_vs", collection = Col[0], ID = IDs),
-            Response(rawhist = "SumET_vs", collection = Col[0], ID = IDs),
-            Response(rawhist = "Thrust_vs", collection = Col[0], ID = IDs),
-            Response(rawhist = "genMET_vs", collection = Col[0], ID = IDs),
+            Response(rawhist = "HT_vs", collection = Col[0], ID = IDs, xLabel = "HT [GeV]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = "NJets_vs", collection = Col[0], ID = IDs, xLabel = "NJets [ ]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = "Nvertex_vs", collection = Col[0], ID = IDs, xLabel = "NVtx [ ]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = "SumET_vs", collection = Col[0], ID = IDs, xLabel = "SumET [GeV]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = "Thrust_vs", collection = Col[0], ID = IDs, xLabel = "Thrust [ ]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = "genMET_vs", collection = Col[0], ID = IDs, xLabel = "genMET [GeV]", yLabel = IDs.split("_", 1)[1]),
             ])
 
 
