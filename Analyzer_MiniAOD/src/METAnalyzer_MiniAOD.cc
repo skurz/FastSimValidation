@@ -307,12 +307,12 @@ void METAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 
   ibooker_.setCurrentFolder(theCollectionName_+"/MetProjThrustOrth");
 
-  h_xHT_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_xvs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xNVertex_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
+  h_xThrust_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
+  h_xSumET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
+  h_xNJets_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
+  h_xGenMET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
 
   ibooker_.cd();  
 
