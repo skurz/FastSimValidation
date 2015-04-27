@@ -279,8 +279,8 @@ void bJetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   for(int i_particle = 0; i_particle < 3; ++i_particle){
     ibooker_.setCurrentFolder(theCollectionName_+"/"+"Gen"+"/"+matchedParticleNames[i_particle]);
     
-    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","true pt vs total # genJets",50,0.,500.);
-    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","true eta vs total # genJets",50,-5.,5.);
+    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","",50,0.,500.);
+    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","",50,-5.,5.);
   }
 
   for(int i_particle = 0; i_particle < 3; ++i_particle){
@@ -288,8 +288,8 @@ void bJetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
     for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
       ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"/"+matchedParticleNames[i_particle]);
 
-      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","true pt vs total # matchedJets for " + *i_shortName + " id",50,0.,500.);
-      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","true eta vs total # matchedJets for " + *i_shortName + " id",50,-5.,5.);
+      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","",50,0.,500.);
+      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","",50,-5.,5.);
       ++histoID;
     }
   }

@@ -360,8 +360,8 @@ void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   for(int i_particle = 0; i_particle < 4; ++i_particle){
     ibooker_.setCurrentFolder(theCollectionName_+"/Gen/"+matchedParticleNames[i_particle]);
     
-    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","true pt vs total # genTaus",50,0.,500.);
-    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","true eta vs total # genTaus",50,-5.,5.);
+    h_truePt_genParticle[i_particle] = ibooker_.book1D("truePt_gen","",50,0.,500.);
+    h_trueEta_genParticle[i_particle] = ibooker_.book1D("trueEta_gen","",50,-5.,5.);
   }
 
   for(int i_particle = 0; i_particle < 4; ++i_particle){
@@ -369,13 +369,13 @@ void TauAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
     for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
       ibooker_.setCurrentFolder(theCollectionName_+"/"+*i_shortName+"/"+matchedParticleNames[i_particle]);
 
-      h_truePt_pt[i_particle][histoID] = ibooker_.book2D("truePt_vs_pt", "true pt vs (reco pt - true pt) / (true pt) for " + *i_shortName + " id", 50,0.,500., 50,-1.,1.);
-      h_truePt_eta[i_particle][histoID] = ibooker_.book2D("truePt_vs_eta", "true pt vs (reco eta - true eta) for " + *i_shortName + " id", 50,0.,500., 50,-0.5,0.5);
-      h_trueEta_pt[i_particle][histoID] = ibooker_.book2D("trueEta_vs_pt", "true eta vs (reco pt - true pt) / (true pt) for " + *i_shortName + " id", 50,-5.,5., 50,-1.,1.);
-      h_trueEta_eta[i_particle][histoID] = ibooker_.book2D("trueEta_vs_eta", "true eta vs (reco eta - true eta) for " + *i_shortName + " id", 50,-5.,5., 50,-0.5,0.5);
+      h_xPt_yPt[i_particle][histoID] = ibooker_.book2D("relPt_vs_truePt", "", 50,0.,500., 50,0.,2.);
+      h_xPt_yEta[i_particle][histoID] = ibooker_.book2D("etaDiff_vs_truePt", "", 50,0.,500., 50,-0.5,0.5);
+      h_xEta_yPt[i_particle][histoID] = ibooker_.book2D("relPt_vs_trueEta", "", 50,-5.,5., 50,0.,2.);
+      h_xEta_yEta[i_particle][histoID] = ibooker_.book2D("etaDiff_vs_trueEta", "", 50,-5.,5., 50,-0.5,0.5);
         
-      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","true pt vs total # matchedTaus for " + *i_shortName + " id",50,0.,500.);
-      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","true eta vs total # matchedTaus for " + *i_shortName + " id",50,-5.,5.);
+      h_truePt_recoParticle[i_particle][histoID] = ibooker_.book1D("truePt_matched","",50,0.,500.);
+      h_trueEta_recoParticle[i_particle][histoID] = ibooker_.book1D("trueEta_matched","",50,-5.,5.);
       
       ++histoID;
     }
@@ -410,10 +410,10 @@ void TauAnalyzer_MiniAOD::fillHisto(std::string matchedParticle, int histoID, st
     h_truePt_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->pt());
     h_trueEta_recoParticle[particleNr][histoID]->Fill((*i_genParticle)->eta());
 
-    h_truePt_pt[particleNr][histoID]->Fill((*i_genParticle)->pt(), (matchedParticle->pt()-(*i_genParticle)->pt())/(*i_genParticle)->pt()); 
-    h_truePt_eta[particleNr][histoID]->Fill((*i_genParticle)->pt(), matchedParticle->eta()-(*i_genParticle)->eta());
-    h_trueEta_pt[particleNr][histoID]->Fill((*i_genParticle)->eta(), (matchedParticle->pt()-(*i_genParticle)->pt())/(*i_genParticle)->pt());
-    h_trueEta_eta[particleNr][histoID]->Fill((*i_genParticle)->eta(), matchedParticle->eta()-(*i_genParticle)->eta());
+    h_xPt_yPt[particleNr][histoID]->Fill((*i_genParticle)->pt(), matchedParticle->pt()/(*i_genParticle)->pt()); 
+    h_xPt_yEta[particleNr][histoID]->Fill((*i_genParticle)->pt(), matchedParticle->eta()-(*i_genParticle)->eta());
+    h_xEta_yPt[particleNr][histoID]->Fill((*i_genParticle)->eta(), matchedParticle->pt()/(*i_genParticle)->pt());
+    h_xEta_yEta[particleNr][histoID]->Fill((*i_genParticle)->eta(), matchedParticle->eta()-(*i_genParticle)->eta());
 
   }
 

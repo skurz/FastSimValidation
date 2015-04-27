@@ -13,7 +13,7 @@ Electrons = [["Electrons", ["vetoID", "looseID", "mediumID", "tightID"]]]
 Muons = [["Muons", ["looseIDIso", "tightIDIso"]]]
 Taus  = [["Taus", ["decayModeFindingOld+byLooseCombinedIsolation/matchedTau", "decayModeFindingOld+byTightIsolation/matchedTau", "decayModeFindingOld+againstElectron/matchedTau", "decayModeFindingNew+byLooseCombinedIsolation/matchedTau","decayModeFindingOld+byLooseCombinedIsolation/matchedEl", "decayModeFindingOld+byTightIsolation/matchedEl", "decayModeFindingOld+againstElectron/matchedEl", "decayModeFindingNew+byLooseCombinedIsolation/matchedEl","decayModeFindingOld+byLooseCombinedIsolation/matchedMu", "decayModeFindingOld+byTightIsolation/matchedMu", "decayModeFindingOld+againstElectron/matchedMu", "decayModeFindingNew+byLooseCombinedIsolation/matchedMu","decayModeFindingOld+byLooseCombinedIsolation/matchedJet", "decayModeFindingOld+byTightIsolation/matchedJet", "decayModeFindingOld+againstElectron/matchedJet", "decayModeFindingNew+byLooseCombinedIsolation/matchedJet"]]]
 Photons = [["Photons", ["looseID", "tightID"]]]
-MET = [["MET", ["vs_MetPt", "vs_MetPx", "vs_MetPy", "vs_MetProj", "vs_MetProjOrth"]]]
+MET = [["MET", ["MetPt", "MetPx", "MetPy", "MetProjThrust", "MetProjThrustOrth"]]]
 
 #######################
 # Scale / Response
@@ -30,10 +30,10 @@ Collections.extend(Jets)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = "truePt_vs_pt", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "p_{T}"),
-            Response(rawhist = "truePt_vs_eta", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "#eta"),
-            Response(rawhist = "trueEta_vs_pt", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "p_{T}"),
-            Response(rawhist = "trueEta_vs_eta", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "#eta"),
+            Response(rawhist = "relPt_vs_truePt", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "p_{T}"),
+            Response(rawhist = "etaDiff_vs_truePt", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "#eta"),
+            Response(rawhist = "relPt_vs_trueEta", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "p_{T}"),
+            Response(rawhist = "etaDiff_vs_trueEta", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "#eta"),
             ])
 
 
@@ -43,8 +43,8 @@ Collections.extend(Jets)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = "truePt_vs_phi", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "#phi"),
-            Response(rawhist = "trueEta_vs_phi", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "#phi"),
+            Response(rawhist = "phiDiff_vs_truePt", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "#phi"),
+            Response(rawhist = "phiDiff_vs_trueEta", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "#phi"),
             ])
 
 
@@ -54,12 +54,12 @@ Collections.extend(MET)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = "HT_vs", collection = Col[0], ID = IDs, xLabel = "HT [GeV]", yLabel = IDs.split("_", 1)[1]),
-            Response(rawhist = "NJets_vs", collection = Col[0], ID = IDs, xLabel = "NJets [ ]", yLabel = IDs.split("_", 1)[1]),
-            Response(rawhist = "Nvertex_vs", collection = Col[0], ID = IDs, xLabel = "NVtx [ ]", yLabel = IDs.split("_", 1)[1]),
-            Response(rawhist = "SumET_vs", collection = Col[0], ID = IDs, xLabel = "SumET [GeV]", yLabel = IDs.split("_", 1)[1]),
-            Response(rawhist = "Thrust_vs", collection = Col[0], ID = IDs, xLabel = "Thrust [ ]", yLabel = IDs.split("_", 1)[1]),
-            Response(rawhist = "genMET_vs", collection = Col[0], ID = IDs, xLabel = "genMET [GeV]", yLabel = IDs.split("_", 1)[1]),
+            Response(rawhist = IDs+"_vs_HT", collection = Col[0], ID = IDs, xLabel = "HT [GeV]", yLabel = IDs),
+            Response(rawhist = IDs+"_vs_NJets", collection = Col[0], ID = IDs, xLabel = "NJets [ ]", yLabel = IDs),
+            Response(rawhist = IDs+"_vs_NVertex", collection = Col[0], ID = IDs, xLabel = "NVtx [ ]", yLabel = IDs),
+            Response(rawhist = IDs+"_vs_SumET", collection = Col[0], ID = IDs, xLabel = "SumET [GeV]", yLabel = IDs),
+            Response(rawhist = IDs+"_vs_Thrust", collection = Col[0], ID = IDs, xLabel = "Thrust [ ]", yLabel = IDs),
+            Response(rawhist = IDs+"_vs_genMET", collection = Col[0], ID = IDs, xLabel = "genMET [GeV]", yLabel = IDs),
             ])
 
 

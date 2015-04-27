@@ -84,14 +84,14 @@ private:
 
 
   // Histograms
-  MonitorElement* h_truePt_pt;
-  MonitorElement* h_trueEta_pt;
+  MonitorElement* h_xPt_yPt;
+  MonitorElement* h_xEta_yPt;
 
-  MonitorElement* h_truePt_eta;
-  MonitorElement* h_trueEta_eta;
+  MonitorElement* h_xPt_yEta;
+  MonitorElement* h_xEta_yEta;
 
-  MonitorElement* h_truePt_phi;
-  MonitorElement* h_trueEta_phi;
+  MonitorElement* h_xPt_yPhi;
+  MonitorElement* h_xEta_yPhi;
 
   MonitorElement* h_truePt_genJet;
   MonitorElement* h_trueEta_genJet;

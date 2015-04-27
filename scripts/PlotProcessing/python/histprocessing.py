@@ -34,7 +34,6 @@ class Efficiency:
 
 
         g_efficiency.SetName("eff_" + h_numerator.GetName())
-        g_efficiency.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
         return [g_efficiency]
 
         # In case TH1 are needed
@@ -59,8 +58,8 @@ class Response:
 
         # Calculate Response
         NbinsX = h_rawhist.GetNbinsX()
-        h_mean = rt.TH1D("scale_" + h_rawhist.GetName(), "scale: " + h_rawhist.GetTitle(), NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
-        h_RMS = rt.TH1D("res_" + h_rawhist.GetName(), "res: " + h_rawhist.GetTitle(), NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
+        h_mean = rt.TH1D("scale_" + h_rawhist.GetName(), "", NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
+        h_RMS = rt.TH1D("res_"    + h_rawhist.GetName(), "", NbinsX, h_rawhist.GetXaxis().GetXmin(), h_rawhist.GetXaxis().GetXmax())
 
         for xBin in range(1, NbinsX):
             h_yProj = h_rawhist.ProjectionY(h_rawhist.GetName() + "_" + str(xBin), xBin, xBin, "e")

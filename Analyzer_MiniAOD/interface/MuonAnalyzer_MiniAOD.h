@@ -91,10 +91,10 @@ private:
 
 
   // Histograms
-  MonitorElement* h_truePt_pt[5];
-  MonitorElement* h_truePt_eta[5];
-  MonitorElement* h_trueEta_pt[5];
-  MonitorElement* h_trueEta_eta[5];
+  MonitorElement* h_xPt_yPt[5];
+  MonitorElement* h_xPt_yEta[5];
+  MonitorElement* h_xEta_yPt[5];
+  MonitorElement* h_xEta_yEta[5];
 
   MonitorElement* h_truePt_recoParticle[5];
   MonitorElement* h_trueEta_recoParticle[5];
