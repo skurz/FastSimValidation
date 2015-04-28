@@ -208,40 +208,40 @@ void METAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& eS
   //-------------------------------
   //--- Fill Histograms
   //-------------------------------
-  h_xHT_yMetPt->Fill(HT, metPt-genMetPt);
-  h_xNVertex_yMetPt->Fill(N_vertex, metPt-genMetPt);
-  h_xThrust_yMetPt->Fill(thrust, metPt-genMetPt);
-  h_xSumET_yMetPt->Fill(sumET, metPt-genMetPt);
-  h_xNJets_yMetPt->Fill(N_jets, metPt-genMetPt);
-  h_xGenMET_yMetPt->Fill(genMET, metPt-genMetPt);
+  h_xHT_yMetPt->Fill(HT, metPt / genMetPt);
+  h_xNVertex_yMetPt->Fill(N_vertex, metPt / genMetPt);
+  h_xThrust_yMetPt->Fill(thrust, metPt / genMetPt);
+  h_xSumET_yMetPt->Fill(sumET, metPt / genMetPt);
+  h_xNJets_yMetPt->Fill(N_jets, metPt / genMetPt);
+  h_xGenMET_yMetPt->Fill(genMET, metPt / genMetPt);
 
-  h_xHT_yMetPx->Fill(HT, metPx-genMetPx);
-  h_xNVertex_yMetPx->Fill(N_vertex, metPx-genMetPx);
-  h_xThrust_yMetPx->Fill(thrust, metPx-genMetPx);
-  h_xSumET_yMetPx->Fill(sumET, metPx-genMetPx);
-  h_xNJets_yMetPx->Fill(N_jets, metPx-genMetPx);
-  h_xGenMET_yMetPx->Fill(genMET, metPx-genMetPx);
+  h_xHT_yMetPx->Fill(HT, metPx / genMetPx);
+  h_xNVertex_yMetPx->Fill(N_vertex, metPx / genMetPx);
+  h_xThrust_yMetPx->Fill(thrust, metPx / genMetPx);
+  h_xSumET_yMetPx->Fill(sumET, metPx / genMetPx);
+  h_xNJets_yMetPx->Fill(N_jets, metPx / genMetPx);
+  h_xGenMET_yMetPx->Fill(genMET, metPx / genMetPx);
 
-  h_xHT_yMetPy->Fill(HT, metPy-genMetPy);
-  h_xNVertex_yMetPy->Fill(N_vertex, metPy-genMetPy);
-  h_xThrust_yMetPy->Fill(thrust, metPy-genMetPy);
-  h_xSumET_yMetPy->Fill(sumET, metPy-genMetPy);
-  h_xNJets_yMetPy->Fill(N_jets, metPy-genMetPy);
-  h_xGenMET_yMetPy->Fill(genMET, metPy-genMetPy);
+  h_xHT_yMetPy->Fill(HT, metPy / genMetPy);
+  h_xNVertex_yMetPy->Fill(N_vertex, metPy / genMetPy);
+  h_xThrust_yMetPy->Fill(thrust, metPy / genMetPy);
+  h_xSumET_yMetPy->Fill(sumET, metPy / genMetPy);
+  h_xNJets_yMetPy->Fill(N_jets, metPy / genMetPy);
+  h_xGenMET_yMetPy->Fill(genMET, metPy / genMetPy);
 
-  h_xHT_yMetProj->Fill(HT, metproj_thrust-genMetproj_thrust);
-  h_xNVertex_yMetProj->Fill(N_vertex, metproj_thrust-genMetproj_thrust);
-  h_xThrust_yMetProj->Fill(thrust, metproj_thrust-genMetproj_thrust);
-  h_xSumET_yMetProj->Fill(sumET, metproj_thrust-genMetproj_thrust);
-  h_xNJets_yMetProj->Fill(N_jets, metproj_thrust-genMetproj_thrust);
-  h_xGenMET_yMetProj->Fill(genMET, metproj_thrust-genMetproj_thrust);
+  h_xHT_yMetProj->Fill(HT, metproj_thrust / genMetproj_thrust);
+  h_xNVertex_yMetProj->Fill(N_vertex, metproj_thrust / genMetproj_thrust);
+  h_xThrust_yMetProj->Fill(thrust, metproj_thrust / genMetproj_thrust);
+  h_xSumET_yMetProj->Fill(sumET, metproj_thrust / genMetproj_thrust);
+  h_xNJets_yMetProj->Fill(N_jets, metproj_thrust / genMetproj_thrust);
+  h_xGenMET_yMetProj->Fill(genMET, metproj_thrust / genMetproj_thrust);
 
-  h_xHT_yMetProjOrth->Fill(HT, metproj_thrust_orth-genMetproj_thrust_orth);
-  h_xNVertex_yMetProjOrth->Fill(N_vertex, metproj_thrust_orth-genMetproj_thrust_orth);
-  h_xThrust_yMetProjOrth->Fill(thrust, metproj_thrust_orth-genMetproj_thrust_orth);
-  h_xSumET_yMetProjOrth->Fill(sumET, metproj_thrust_orth-genMetproj_thrust_orth);
-  h_xNJets_yMetProjOrth->Fill(N_jets, metproj_thrust_orth-genMetproj_thrust_orth);
-  h_xGenMET_yMetProjOrth->Fill(genMET, metproj_thrust_orth-genMetproj_thrust_orth);
+  h_xHT_yMetProjOrth->Fill(HT, metproj_thrust_orth / genMetproj_thrust_orth);
+  h_xNVertex_yMetProjOrth->Fill(N_vertex, metproj_thrust_orth / genMetproj_thrust_orth);
+  h_xThrust_yMetProjOrth->Fill(thrust, metproj_thrust_orth / genMetproj_thrust_orth);
+  h_xSumET_yMetProjOrth->Fill(sumET, metproj_thrust_orth / genMetproj_thrust_orth);
+  h_xNJets_yMetProjOrth->Fill(N_jets, metproj_thrust_orth / genMetproj_thrust_orth);
+  h_xGenMET_yMetProjOrth->Fill(genMET, metproj_thrust_orth / genMetproj_thrust_orth);
 
 
 }
@@ -271,48 +271,48 @@ void METAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   ibooker_.cd();
   ibooker_.setCurrentFolder(theCollectionName_+"/MetPt");
 
-  h_xHT_yMetPt = ibooker_.book2D("MetPt_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetPt = ibooker_.book2D("MetPt_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetPt = ibooker_.book2D("MetPt_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetPt = ibooker_.book2D("MetPt_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetPt = ibooker_.book2D("MetPt_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetPt = ibooker_.book2D("MetPt_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetPt = ibooker_.book2D("relMetPt_vs_HT", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNVertex_yMetPt = ibooker_.book2D("relMetPt_vs_NVertex", "", 50., 0., 50., 50., 0., 2.);
+  h_xThrust_yMetPt = ibooker_.book2D("relMetPt_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2.);
+  h_xSumET_yMetPt = ibooker_.book2D("relMetPt_vs_SumET", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNJets_yMetPt = ibooker_.book2D("relMetPt_vs_NJets", "", 20, 0., 20., 50., 0., 2.);
+  h_xGenMET_yMetPt = ibooker_.book2D("relMetPt_vs_genMET", "", 50., 0., 2000., 50., 0., 2.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/MetPx");
 
-  h_xHT_yMetPx = ibooker_.book2D("MetPx_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetPx = ibooker_.book2D("MetPx_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetPx = ibooker_.book2D("MetPx_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetPx = ibooker_.book2D("MetPx_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetPx = ibooker_.book2D("MetPx_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetPx = ibooker_.book2D("MetPx_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetPx = ibooker_.book2D("relMetPx_vs_HT", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNVertex_yMetPx = ibooker_.book2D("relMetPx_vs_NVertex", "", 50., 0., 50., 50., 0., 2.);
+  h_xThrust_yMetPx = ibooker_.book2D("relMetPx_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2.);
+  h_xSumET_yMetPx = ibooker_.book2D("relMetPx_vs_SumET", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNJets_yMetPx = ibooker_.book2D("relMetPx_vs_NJets", "", 20, 0., 20., 50., 0., 2.);
+  h_xGenMET_yMetPx = ibooker_.book2D("relMetPx_vs_genMET", "", 50., 0., 2000., 50., 0., 2.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/MetPy");
 
-  h_xHT_yMetPy = ibooker_.book2D("MetPy_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetPy = ibooker_.book2D("MetPy_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetPy = ibooker_.book2D("MetPy_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetPy = ibooker_.book2D("MetPy_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetPy = ibooker_.book2D("MetPy_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetPy = ibooker_.book2D("MetPy_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetPy = ibooker_.book2D("relMetPy_vs_HT", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNVertex_yMetPy = ibooker_.book2D("relMetPy_vs_NVertex", "", 50., 0., 50., 50., 0., 2.);
+  h_xThrust_yMetPy = ibooker_.book2D("relMetPy_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2.);
+  h_xSumET_yMetPy = ibooker_.book2D("relMetPy_vs_SumET", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNJets_yMetPy = ibooker_.book2D("relMetPy_vs_NJets", "", 20, 0., 20., 50., 0., 2.);
+  h_xGenMET_yMetPy = ibooker_.book2D("relMetPy_vs_genMET", "", 50., 0., 2000., 50., 0., 2.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/MetProjThrust");
 
-  h_xHT_yMetProj = ibooker_.book2D("MetProjThrust_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetProj = ibooker_.book2D("MetProjThrust_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetProj = ibooker_.book2D("MetProjThrust_vs_Thrust", "t", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetProj = ibooker_.book2D("MetProjThrust_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetProj = ibooker_.book2D("MetProjThrust_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetProj = ibooker_.book2D("MetProjThrust_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetProj = ibooker_.book2D("relMetProjThrust_vs_HT", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNVertex_yMetProj = ibooker_.book2D("relMetProjThrust_vs_NVertex", "", 50., 0., 50., 50., 0., 2.);
+  h_xThrust_yMetProj = ibooker_.book2D("relMetProjThrust_vs_Thrust", "t", 50., 0.4, 1.1, 50., 0., 2.);
+  h_xSumET_yMetProj = ibooker_.book2D("relMetProjThrust_vs_SumET", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNJets_yMetProj = ibooker_.book2D("relMetProjThrust_vs_NJets", "", 20, 0., 20., 50., 0., 2.);
+  h_xGenMET_yMetProj = ibooker_.book2D("relMetProjThrust_vs_genMET", "", 50., 0., 2000., 50., 0., 2.);
 
   ibooker_.setCurrentFolder(theCollectionName_+"/MetProjThrustOrth");
 
-  h_xHT_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_HT", "", 50., 0., 2000., 50., 0., 2000.);
-  h_xNVertex_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NVertex", "", 50., 0., 50., 50., 0., 2000.);
-  h_xThrust_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2000.);
-  h_xSumET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_SumET", "", 50., 0., 2000., 50., 0., 4000.);
-  h_xNJets_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NJets", "", 20, 0., 20., 50., 0., 2000.);
-  h_xGenMET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_genMET", "", 50., 0., 2000., 50., 0., 2000.);
+  h_xHT_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_HT", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNVertex_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NVertex", "", 50., 0., 50., 50., 0., 2.);
+  h_xThrust_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_Thrust", "", 50., 0.4, 1.1, 50., 0., 2.);
+  h_xSumET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_SumET", "", 50., 0., 2000., 50., 0., 2.);
+  h_xNJets_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_NJets", "", 20, 0., 20., 50., 0., 2.);
+  h_xGenMET_yMetProjOrth = ibooker_.book2D("MetProjThrustOrth_vs_genMET", "", 50., 0., 2000., 50., 0., 2.);
 
   ibooker_.cd();  
 
