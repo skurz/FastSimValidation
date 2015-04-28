@@ -54,12 +54,12 @@ Collections.extend(MET)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Response(rawhist = IDs+"_vs_HT", collection = Col[0], ID = IDs, xLabel = "HT [GeV]", yLabel = IDs),
-            Response(rawhist = IDs+"_vs_NJets", collection = Col[0], ID = IDs, xLabel = "NJets [ ]", yLabel = IDs),
-            Response(rawhist = IDs+"_vs_NVertex", collection = Col[0], ID = IDs, xLabel = "NVtx [ ]", yLabel = IDs),
-            Response(rawhist = IDs+"_vs_SumET", collection = Col[0], ID = IDs, xLabel = "SumET [GeV]", yLabel = IDs),
-            Response(rawhist = IDs+"_vs_Thrust", collection = Col[0], ID = IDs, xLabel = "Thrust [ ]", yLabel = IDs),
-            Response(rawhist = IDs+"_vs_genMET", collection = Col[0], ID = IDs, xLabel = "genMET [GeV]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_HT", collection = Col[0], ID = IDs, xLabel = "HT [GeV]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_NJets", collection = Col[0], ID = IDs, xLabel = "NJets [ ]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_NVertex", collection = Col[0], ID = IDs, xLabel = "NVtx [ ]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_SumET", collection = Col[0], ID = IDs, xLabel = "SumET [GeV]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_Thrust", collection = Col[0], ID = IDs, xLabel = "Thrust [ ]", yLabel = IDs),
+            Response(rawhist = "rel"+IDs+"_vs_genMET", collection = Col[0], ID = IDs, xLabel = "genMET [GeV]", yLabel = IDs),
             ])
 
 
