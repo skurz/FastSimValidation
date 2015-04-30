@@ -22,8 +22,13 @@ class Efficiency:
         h_numerator = file.Get("DQMData/Run 1/" + self.collection + "/Run summary/" + self.ID + "/" + self.numerator).Clone()
 
         # Calculate Fraction Using Binomial Errors
+        # Asym. Errors:
         g_efficiency = rt.TGraphAsymmErrors()
         g_efficiency.Divide(h_numerator,h_denominator,"cl=0.683 b(1,1) mode")
+
+        # In case TH1 are needed
+        #g_efficiency = h_numerator.Clone()
+        #g_efficiency.Divide(h_numerator, h_denominator, 1, 1, "B")
 
         # Set Axis Labels, Name,..
         g_efficiency.GetXaxis().SetTitle(self.xLabel);
@@ -35,12 +40,6 @@ class Efficiency:
 
         g_efficiency.SetName("eff_" + h_numerator.GetName())
         return [g_efficiency]
-
-        # In case TH1 are needed
-        #h_numerator.Divide(h_numerator, h_denominator, 1, 1, "B")
-        #h_numerator.SetName("eff_" + h_numerator.GetName())
-        #h_numerator.SetTitle("Efficiency of " + h_numerator.GetTitle().split(" ", 5)[5])
-        #return [h_numerator]
 
 
 class Response:
@@ -70,9 +69,14 @@ class Response:
 
         # Set Axis Labels, Name,..
         h_mean.GetXaxis().SetTitle(self.xLabel);
-        h_mean.GetYaxis().SetTitle(self.yLabel + " scale");
         h_RMS.GetXaxis().SetTitle(self.xLabel);
-        h_RMS.GetYaxis().SetTitle(self.yLabel + " resolution");
+
+        if self.yLabel.count("eta")==0 and self.yLabel.count("phi")==0:
+            h_mean.GetYaxis().SetTitle(self.yLabel + " scale (mean of reco/true)");        
+            h_RMS.GetYaxis().SetTitle(self.yLabel + " resolution (rms of reco/true)");
+        else:
+            h_mean.GetYaxis().SetTitle(self.yLabel + " scale (mean of reco-true)");        
+            h_RMS.GetYaxis().SetTitle(self.yLabel + " resolution (rms of reco-true)");
 
         h_mean.GetXaxis().SetTitleOffset(1.3);
         h_mean.GetYaxis().SetTitleOffset(1.4);
