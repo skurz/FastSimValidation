@@ -214,10 +214,10 @@ void ElectronAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
   for(std::vector<std::string>::const_iterator i_shortName = tagNamesShort.begin(); i_shortName != tagNamesShort.end(); ++i_shortName){
     ibooker_.setCurrentFolder(theCollectionName_+"/"+(*i_shortName)+"ID");
 
-    h_xPt_yPt[histoID] = ibooker_.book2D("relPt_vs_truePt", "", 50,0.,500., 100,0.,2.);
-    h_xPt_yEta[histoID] = ibooker_.book2D("etaDiff_vs_truePt", "", 50,0.,500., 100,-0.5,0.5);
-    h_xEta_yPt[histoID] = ibooker_.book2D("relPt_vs_trueEta", "", 50,-5.,5., 100,0.,2.);
-    h_xEta_yEta[histoID] = ibooker_.book2D("etaDiff_vs_trueEta", "", 50,-5.,5., 100,-0.5,0.5);
+    h_xPt_yPt[histoID] = ibooker_.book2D("relPt_vs_truePt", "", 50,0.,500., 500,0.,2.);
+    h_xPt_yEta[histoID] = ibooker_.book2D("etaDiff_vs_truePt", "", 50,0.,500., 500,-0.5,0.5);
+    h_xEta_yPt[histoID] = ibooker_.book2D("relPt_vs_trueEta", "", 50,-5.,5., 500,0.,2.);
+    h_xEta_yEta[histoID] = ibooker_.book2D("etaDiff_vs_trueEta", "", 50,-5.,5., 500,-0.5,0.5);
 
     h_truePt_recoParticle[histoID] = ibooker_.book1D("truePt_matched","",50,0.,500.);
     h_trueEta_recoParticle[histoID] = ibooker_.book1D("trueEta_matched","",50,-5.,5.);

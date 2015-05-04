@@ -72,11 +72,11 @@ class Response:
         h_RMS.GetXaxis().SetTitle(self.xLabel);
 
         if self.yLabel.count("eta")==0 and self.yLabel.count("phi")==0:
-            h_mean.GetYaxis().SetTitle(self.yLabel + " scale (mean of reco/true)");        
-            h_RMS.GetYaxis().SetTitle(self.yLabel + " resolution (rms of reco/true)");
+            h_mean.GetYaxis().SetTitle("<"+self.yLabel+"^{reco} / "+self.yLabel+"^{true}>");        
+            h_RMS.GetYaxis().SetTitle("#sigma("+self.yLabel+"^{reco} / "+self.yLabel+"^{true})");
         else:
-            h_mean.GetYaxis().SetTitle(self.yLabel + " scale (mean of reco-true)");        
-            h_RMS.GetYaxis().SetTitle(self.yLabel + " resolution (rms of reco-true)");
+            h_mean.GetYaxis().SetTitle("<"+self.yLabel+"^{reco} - "+self.yLabel+"^{true}>");        
+            h_RMS.GetYaxis().SetTitle("#sigma("+self.yLabel+"^{reco} - "+self.yLabel+"^{true})");
 
         h_mean.GetXaxis().SetTitleOffset(1.3);
         h_mean.GetYaxis().SetTitleOffset(1.4);

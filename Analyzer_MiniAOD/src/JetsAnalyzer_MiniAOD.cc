@@ -190,14 +190,14 @@ void JetsAnalyzer_MiniAOD::bookHistos(DQMStore::IBooker & ibooker_)
 
   ibooker_.setCurrentFolder(theCollectionName_+"/LooseID");
 
-  h_xPt_yPt = ibooker_.book2D("relPt_vs_truePt","",50,0.,500.,100,0.,2.);
-  h_xEta_yPt = ibooker_.book2D("relPt_vs_trueEta","",50,-5.,5.,100,0.,2.);
+  h_xPt_yPt = ibooker_.book2D("relPt_vs_truePt","",50,0.,500.,500,0.,2.);
+  h_xEta_yPt = ibooker_.book2D("relPt_vs_trueEta","",50,-5.,5.,500,0.,2.);
 
-  h_xPt_yEta = ibooker_.book2D("etaDiff_vs_truePt","",50,0.,500.,100,-0.5,0.5);
-  h_xEta_yEta = ibooker_.book2D("etaDiff_vs_trueEta","",50,-5.,5.,100,-0.5,0.5);
+  h_xPt_yEta = ibooker_.book2D("etaDiff_vs_truePt","",50,0.,500.,500,-0.5,0.5);
+  h_xEta_yEta = ibooker_.book2D("etaDiff_vs_trueEta","",50,-5.,5.,500,-0.5,0.5);
 
-  h_xPt_yPhi = ibooker_.book2D("phiDiff_vs_truePt","",50,0.,500.,100,-0.5,0.5);
-  h_xEta_yPhi = ibooker_.book2D("phiDiff_vs_trueEta","",50,-5.,5.,100,-0.5,0.5);
+  h_xPt_yPhi = ibooker_.book2D("phiDiff_vs_truePt","",50,0.,500.,500,-0.5,0.5);
+  h_xEta_yPhi = ibooker_.book2D("phiDiff_vs_trueEta","",50,-5.,5.,500,-0.5,0.5);
 
   h_truePt_recoJet = ibooker_.book1D("truePt_matched","",50,0.,500.);
   h_trueEta_recoJet = ibooker_.book1D("trueEta_matched","",50,-5.,5.);
