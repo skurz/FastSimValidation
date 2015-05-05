@@ -73,6 +73,9 @@ def getYRangeGraph(hists):
                 hist.GetPoint(nBin, xVal, yVal)
                 yList.append(float(yVal))
 
+    if(len(yList) == 0):
+        return [0, 1]
+
     _min = min(yList)*1.1
     _max = max(yList)*1.3
     return [_min,_max]
@@ -81,6 +84,9 @@ def getYRangeGraph(hists):
 # the argument is a list of histograms
 # it is assumed that the histograms have the same binning
 def processTH1(hists,ofile):
+
+    for h in range(len(hists)):
+        hists[h].Rebin(2)
 
     # set histogram style and draw
     [_min,_max] = getYRange(hists)
@@ -91,7 +97,6 @@ def processTH1(hists,ofile):
         hist = hists[h]        
         hist.SetStats(False)
         setHistStyle(hist, h, _min, _max)
-        hist.Rebin(2)
 
         if h == 0:
             hist.Draw("E")
