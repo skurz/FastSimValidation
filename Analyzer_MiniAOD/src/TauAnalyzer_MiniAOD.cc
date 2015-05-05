@@ -298,6 +298,44 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
       hadGenTaus.push_back(*i_genTau);
     }
   }
+
+  // GenMuons from Hard Interaction
+  std::vector<const pat::PackedGenParticle*> selectedGenMuons;
+  
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
+  {
+    const reco::Candidate* mom = *i_genMuon;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==23 || abs(mom->pdgId())==24){
+        selectedGenMuons.push_back(*i_genMuon);
+        break;
+      }else if(abs(mom->pdgId())==11 || abs(mom->pdgId())==13 || abs(mom->pdgId()==15)){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  } 
+
+  // GenElectrons from Hard Interaction
+  std::vector<const pat::PackedGenParticle*> selectedGenElectrons;
+  
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) 
+  {
+    const reco::Candidate* mom = *i_genElectron;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==23 || abs(mom->pdgId())==24){
+        selectedGenElectrons.push_back(*i_genElectron);
+        break;
+      }else if(abs(mom->pdgId())==11 || abs(mom->pdgId())==13 || abs(mom->pdgId()==15)){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  }
   
 
   //-------------------------------
@@ -309,8 +347,8 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
   int histID = 0;
   for(std::vector<std::vector<const pat::Tau*>>::iterator i_idTaus = idTaus.begin(); i_idTaus != idTaus.end(); ++i_idTaus){
     fillHisto("matchedTau", histID, &(*i_idTaus), &hadGenTaus);
-    fillHisto("matchedEl", histID, &(*i_idTaus), &genElectrons);
-    fillHisto("matchedMu", histID, &(*i_idTaus), &genMuons);
+    fillHisto("matchedEl", histID, &(*i_idTaus), &selectedGenElectrons);
+    fillHisto("matchedMu", histID, &(*i_idTaus), &selectedGenMuons);
     fillHisto("matchedJet", histID, &(*i_idTaus), &genJets);
 
     ++histID;
