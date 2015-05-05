@@ -252,10 +252,28 @@ for (reco::CandidateCollection::const_iterator i_genjet = GenJetCollection->begi
     if(!foundMatch) cleanedGenTaus.push_back(*i_statTau);
   }
 
+  // GenTaus from Hard Interaction
+  std::vector<const reco::GenParticle*> selectedGenTaus;
+  
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTaus = cleanedGenTaus.begin(); i_genTaus != cleanedGenTaus.end(); ++i_genTaus) 
+  {
+    const reco::Candidate* mom = *i_genTaus;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==23 || abs(mom->pdgId())==24){
+        selectedGenTaus.push_back(*i_genTaus);
+        break;
+      }else if(abs(mom->pdgId())==11 || abs(mom->pdgId())==13 || abs(mom->pdgId()==15)){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  }
 
   // Hadronic taus on genLevel
   std::vector<const reco::GenParticle*> hadGenTaus;
-  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = cleanedGenTaus.begin(); i_genTau != cleanedGenTaus.end(); ++i_genTau){
+  for (std::vector<const reco::GenParticle*>::const_iterator i_genTau = selectedGenTaus.begin(); i_genTau != selectedGenTaus.end(); ++i_genTau){
     const reco::Candidate* i_daughter = *i_genTau;
     bool foundLepton = false;
     bool foundHadron = false;

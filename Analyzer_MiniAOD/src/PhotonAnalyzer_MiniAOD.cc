@@ -167,6 +167,26 @@ void PhotonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const&
     }
   }
 
+  // GenPhotons from Hard Interaction
+  // So far: FROM HIGGS ONLY
+  std::vector<const pat::PackedGenParticle*> selectedGenPhotons;
+  
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) 
+  {
+    const reco::Candidate* mom = *i_genPhoton;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==25){
+        selectedGenPhotons.push_back(*i_genPhoton);
+        break;
+      }else if(abs(mom->pdgId())==22){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  } 
+
 
   //-------------------------------
   // Fill Histrograms
@@ -174,14 +194,14 @@ void PhotonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const&
 
   int histID = 0;
   for(std::vector<std::vector<const pat::Photon*>>::iterator i_idPhotons = idPhotons.begin(); i_idPhotons != idPhotons.end(); ++i_idPhotons){
-    fillHisto(histID, &(*i_idPhotons), &genPhotons);
+    fillHisto(histID, &(*i_idPhotons), &selectedGenPhotons);
     //std::cout << (&(*it))->size() << std::endl;
     ++histID;
   }
 
 
   // Gen
-  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = genPhotons.begin(); i_genPhoton != genPhotons.end(); ++i_genPhoton) 
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genPhoton = selectedGenPhotons.begin(); i_genPhoton != selectedGenPhotons.end(); ++i_genPhoton) 
   {
     h_truePt_genParticle->Fill((*i_genPhoton)->pt());
     h_trueEta_genParticle->Fill((*i_genPhoton)->eta());

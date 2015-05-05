@@ -156,24 +156,42 @@ void MuonAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup const& e
     if(i_patMuonPtr->isLooseMuon() && muonIso < 0.20) looseMuons.push_back(i_patMuonPtr);
     if(i_patMuonPtr->isTightMuon(*pVertex) && muonIso < 0.12) tightMuons.push_back(i_patMuonPtr);
   }
+
+  // GenMuons from Hard Interaction
+  std::vector<const pat::PackedGenParticle*> selectedGenMuons;
   
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
+  {
+    const reco::Candidate* mom = *i_genMuon;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==23 || abs(mom->pdgId())==24){
+  	    selectedGenMuons.push_back(*i_genMuon);
+        break;
+      }else if(abs(mom->pdgId())==11 || abs(mom->pdgId())==13 || abs(mom->pdgId()==15)){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  } 
 
   //-------------------------------
   // Fill Histrograms
   //-------------------------------
 
-  fillHisto(0, &looseMuons, &genMuons);
-  fillHisto(1, &tightMuons, &genMuons);
+  fillHisto(0, &looseMuons, &selectedGenMuons);
+  fillHisto(1, &tightMuons, &selectedGenMuons);
   
   // Gen
-  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = genMuons.begin(); i_genMuon != genMuons.end(); ++i_genMuon) 
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genMuon = selectedGenMuons.begin(); i_genMuon != selectedGenMuons.end(); ++i_genMuon) 
   {
     h_truePt_genParticle->Fill((*i_genMuon)->pt());
     h_trueEta_genParticle->Fill((*i_genMuon)->eta());
   }
 
 
-  if(debug_ && genMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
+  if(debug_ && selectedGenMuons.size() > 0) std::cout << genMuons.size() << "; " << looseMuons.size() << "; " << tightMuons.size() << std::endl;
 
 }
 //

@@ -154,7 +154,26 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
     for(std::vector<std::pair<std::string,float>>::const_iterator i_elIDs = (*i_patElectron)->electronIDs().begin(); i_elIDs != (*i_patElectron)->electronIDs().end(); ++i_elIDs){
       std::cout << i_elIDs->first << std::endl;
     }
-  }   
+  }
+
+  // GenElectrons from Hard Interaction
+  std::vector<const pat::PackedGenParticle*> selectedGenElectrons;
+  
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) 
+  {
+    const reco::Candidate* mom = *i_genElectron;
+    while(true){
+      if(mom == 0){
+        break;
+      }else if(abs(mom->pdgId())==23 || abs(mom->pdgId())==24){
+        selectedGenElectrons.push_back(*i_genElectron);
+        break;
+      }else if(abs(mom->pdgId())==11 || abs(mom->pdgId())==13 || abs(mom->pdgId()==15)){
+        mom = mom->mother(0);
+        continue;
+      }else break;
+    }
+  }
   
 
   //-------------------------------
@@ -163,20 +182,20 @@ void ElectronAnalyzer_MiniAOD::analyze(edm::Event const& e, edm::EventSetup cons
 
   int histID = 0;
   for(std::vector<std::vector<const pat::Electron*>>::iterator i_idElectrons = idElectrons.begin(); i_idElectrons != idElectrons.end(); ++i_idElectrons){
-    fillHisto(histID, &(*i_idElectrons), &genElectrons);
+    fillHisto(histID, &(*i_idElectrons), &selectedGenElectrons);
     //std::cout << (&(*it))->size() << std::endl;
     ++histID;
   }
 
   // Gen
-  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = genElectrons.begin(); i_genElectron != genElectrons.end(); ++i_genElectron) 
+  for (std::vector<const pat::PackedGenParticle*>::const_iterator i_genElectron = selectedGenElectrons.begin(); i_genElectron != selectedGenElectrons.end(); ++i_genElectron) 
   {
     h_truePt_genParticle->Fill((*i_genElectron)->pt());
     h_trueEta_genParticle->Fill((*i_genElectron)->eta());
   }
 
 
-  //if(debug_ && genElectrons.size() > 0) std::cout << genElectrons.size() << "; " << looseElectrons.size() << "; " << tightElectrons.size() << std::endl;
+  //if(debug_ && selectedGenElectrons.size() > 0) std::cout << selectedGenElectrons.size() << "; " << looseElectrons.size() << "; " << tightElectrons.size() << std::endl;
 
 
 }
