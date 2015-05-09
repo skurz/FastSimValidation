@@ -26,11 +26,14 @@ PADFRAC = 0.28
 canvas = rt.TCanvas("canvas","canvas",800,800)
 mainpad = rt.TPad("mainpad","mainpad",0.,PADFRAC,1.,1.)
 mainpad.SetBottomMargin(0.12)
+mainpad.SetTopMargin(0.06)
 mainpad.SetLeftMargin(0.12)
+mainpad.SetRightMargin(0.05)
 ratiopad = rt.TPad("ratiopad","ratiopad",0.,0.,1.,PADFRAC)
-ratiopad.SetBottomMargin(0.3)
-ratiopad.SetTopMargin(0.12)
+ratiopad.SetBottomMargin(0.16)
+ratiopad.SetTopMargin(0.08)
 ratiopad.SetLeftMargin(0.12)
+ratiopad.SetRightMargin(0.05)
 canvas.cd()
 mainpad.Draw()
 canvas.cd()
@@ -85,8 +88,8 @@ def getYRangeGraph(hists):
 # it is assumed that the histograms have the same binning
 def processTH1(hists,ofile):
 
-    for h in range(len(hists)):
-        hists[h].Rebin(2)
+#    for h in range(len(hists)):
+#        hists[h].Rebin(2)
 
     # set histogram style and draw
     [_min,_max] = getYRange(hists)
@@ -126,7 +129,7 @@ def processTH1(hists,ofile):
 
     # Legend
     mainpad.cd()
-    leg = rt.TLegend(0.7,0.75,0.9,0.9);
+    leg = rt.TLegend(0.75,0.79,0.95,0.94);
     #leg->SetHeader("");
     for h in range(len(hists)):
         if h == 0:
@@ -201,7 +204,7 @@ def processTGraph(hists,ofile):
 
     # Legend
     mainpad.cd()
-    leg = rt.TLegend(0.7,0.75,0.9,0.9);
+    leg = rt.TLegend(0.75,0.79,0.95,0.94);
     #leg->SetHeader("");
     for h in range(len(hists)):
         if h == 0:
@@ -219,9 +222,10 @@ def setHistStyle(hist, ind, ymin, ymax):
     hist.SetMaximum(ymax)    
     hist.GetXaxis().CenterTitle()
     hist.GetYaxis().CenterTitle()
-    hist.GetYaxis().SetTitleOffset(0.5*2.7)
-    hist.GetXaxis().SetTitleSize(0.045)
-    hist.GetYaxis().SetTitleSize(0.045)
+    hist.GetXaxis().SetTitleOffset(0.4*2.7)
+    hist.GetYaxis().SetTitleOffset(0.48*2.7)
+    hist.GetXaxis().SetTitleSize(0.048)
+    hist.GetYaxis().SetTitleSize(0.048)
     hist.SetLineColor(colors[ind])
 
 def setRatioStyle(ratio):
@@ -231,7 +235,7 @@ def setRatioStyle(ratio):
     ratio.SetLineWidth(1)
     ratio.SetTitle(";;FastSim/FullSim")
     ratio.GetYaxis().CenterTitle()
-    ratio.GetYaxis().SetTitleSize(0.045*2.6)
+    ratio.GetYaxis().SetTitleSize(0.04*2.6)
     ratio.GetYaxis().SetTitleOffset(0.5)
     ratio.GetXaxis().SetLabelSize(0.09)
     ratio.GetYaxis().SetLabelSize(0.09)

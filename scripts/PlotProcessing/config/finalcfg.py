@@ -78,6 +78,6 @@ Collections.extend(Photons)
 for Col in Collections:
     for IDs in Col[1]:
         cfg.extend([
-            Efficiency(numerator = "truePt_matched", denominator = "truePt_gen", collection = Col[0], ID = IDs, xLabel = "p_{T} [GeV]", yLabel = "Efficiency"),
-            Efficiency(numerator = "trueEta_matched", denominator = "trueEta_gen", collection = Col[0], ID = IDs, xLabel = "#eta [ ]", yLabel = "Efficiency"),
+            Efficiency(numerator = "truePt_matched", denominator = "truePt_gen", collection = Col[0], ID = IDs, xLabel = "p_{T}^{true} [GeV]", yLabel = "Efficiency"),
+            Efficiency(numerator = "trueEta_matched", denominator = "trueEta_gen", collection = Col[0], ID = IDs, xLabel = "#eta^{true}", yLabel = "Efficiency"),
             ])
